@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap');
 * {
     font-family: "Ubuntu Sans", sans-serif;
 }
@@ -52,6 +53,6 @@ button:hover {
     background-color: #8a1432;
 }
 
-#result {
+/* #result {
     margin-top: 20px;
-}
+} */
