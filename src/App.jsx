@@ -97,9 +97,9 @@ function App() {
           />
           {inputValue.includes(",") &&
           inputValue[inputValue.length - 1] != "," ? (
-            <button type="submit">Check contribution</button>
-          ) : (
             <button type="submit">Comparer</button>
+          ) : (
+            <button type="submit">Check contribution</button>
           )}
         </form>
         <div>
