@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import Dateformat from "./components/sidebar/dateFormat";
+import Result from "./components/result/result";
 
 function App() {
   const [usernames, setUsernames] = useState("");
@@ -12,6 +13,9 @@ function App() {
   );
   const [resultCount, setResultCount] = useState(-1);
   const [resultCommons, setResultCommons] = useState("");
+
+  const projectList = ["Wikipedia", "Wiki Commons", "Wiki data", "Kiwix"];
+  let userChoice = "";
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,11 +37,9 @@ function App() {
     }, 2000);
   };
 
-  <Dateformat />
-  
   return (
     <div className="container">
-      <h1>Comparer les contributions Wikipedia </h1>
+      <h1 className="main-title">Comparer les contributions {userChoice}</h1>
       <div className="form-container">
         <form id="userForm" onSubmit={handleSubmit}>
           <label htmlFor="usernames">
@@ -76,32 +78,7 @@ function App() {
         </form>
         <div>
           {loading && <div id="loader" className="loader"></div>}
-          <div id="resultWikipedia">
-            {resultCount < 0 ? (
-              "the result will be displayed here"
-            ) : resultWikipedia.length == 0 ? (
-              "there is not result for that user"
-            ) : (
-              <>
-                <h4 className="resultTitle">
-                  The result for the user {usernames} are{" "}
-                  {resultWikipedia.length}
-                </h4>
-                <div className="result">
-                  <h5>user</h5>
-                  <h5>Title</h5>
-                  <h5>Date </h5>
-                </div>
-                {resultWikipedia?.map((el, index) => (
-                  <div key={index} className="result">
-                    <h6> {el.user}</h6>
-                    <h6>{el.title}</h6>
-                    <h6>{dateformat(el.timestamp)}</h6>
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
+          <Result />
         </div>
       </div>
     </div>
