@@ -17,13 +17,13 @@ function App() {
 
     setUsernames(inputRef.current.value)
     console.log(inputRef);
-
-    const usernameArray = usernames.split(",").map((name) => name.trim());
+    
+    const usernameArray = inputRef.current.value.split(",").map((name) => name.trim());
 
     const contributionsByUser = await Promise.all(
       usernameArray.map(async (username) => {
         const response = await fetch(
-          `https://fr.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${inputRef.current.value}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
+          `https://fr.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
         );
         const data = await response.json();
         const contributions = data.query.usercontribs.filter((contribution) => {
