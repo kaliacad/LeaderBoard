@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -9,12 +9,16 @@ function App() {
   const [resultWikipedia, setResultWikipedia] = useState([]);
   const [resultCount, setResultCount] = useState(-1);
   const [resultCommons, setResultCommons] = useState("");
+  const inputRef = useRef()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const usernameArray = usernames.split(",").map((name) => name.trim());
+    setUsernames(inputRef.current.value)
+    console.log(inputRef);
+    
+    const usernameArray = inputRef.current.value.split(",").map((name) => name.trim());
 
     const contributionsByUser = await Promise.all(
       usernameArray.map(async (username) => {
@@ -60,8 +64,8 @@ function App() {
             type="text"
             id="usernames"
             name="usernames"
-            value={usernames}
-            onChange={(e) => setUsernames(e.target.value)}
+            // value={usernames}
+            ref={inputRef}
             required
           />
 
@@ -91,13 +95,13 @@ function App() {
           {loading && <div id="loader" className="loader"></div>}
           <div id="resultWikipedia">
             {resultCount < 0 ? (
-              "the result will be displayed here"
+              "Les resultats seront affichés ici"
             ) : resultWikipedia.length === 0 ? (
-              "there is not result for that user"
+              "Aucun resultat pour cet utilisateur"
             ) : (
               <>
                 <h4 className="resultTitle">
-                  The result for the user {usernames} are {resultWikipedia.length}
+                  L'utilisateur {usernames} a {resultWikipedia.length} contribution(s)
                 </h4>
                 <div className="result">
                   <h5>Username</h5>
