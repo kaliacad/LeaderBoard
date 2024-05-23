@@ -6,39 +6,48 @@ function App() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(false);
-  const [resultWikipedia, setResultWikipedia] = useState(
-    "the result will be displayed here"
-  );
+  const [resultWikipedia, setResultWikipedia] = useState([]);
   const [resultCount, setResultCount] = useState(-1);
   const [resultCommons, setResultCommons] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Simulation de résultats après une requête
-    setTimeout(async () => {
-      setLoading(false);
-      let result = await fetch(
-        `https://fr.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${usernames}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          setResultWikipedia(data.query.usercontribs);
-          setResultCount(resultWikipedia.length);
-        });
+    const usernameArray = usernames.split(",").map((name) => name.trim());
 
-      setResultCommons("Résultats Commons...");
-    }, 2000);
+    const contributionsByUser = await Promise.all(
+      usernameArray.map(async (username) => {
+        const response = await fetch(
+          `https://fr.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
+        );
+        const data = await response.json();
+        const contributions = data.query.usercontribs.filter((contribution) => {
+          const contributionDate = new Date(contribution.timestamp);
+          return (
+            contributionDate >= new Date(startDate) &&
+            contributionDate <= new Date(endDate)
+          );
+        });
+        return { username, contributions };
+      })
+    );
+
+    const allContributions = contributionsByUser.flatMap((user) => user.contributions);
+    setResultWikipedia(allContributions);
+    setResultCount(allContributions.length);
+
+    setLoading(false);
+    setResultCommons("Résultats Commons...");
   };
 
   function dateformat(date) {
-    let firstD = date.split("T")[0];
-    let secondD = date.split("T")[1].replace("Z", "");
-    date = firstD.split("T")[0].replaceAll("-", " ").split(" ");
-
-    return `${date[2]}-${date[1]}-${date[0]} ${secondD}`;
+    const [datePart, timePart] = date.split("T");
+    const formattedDate = datePart.split("-").reverse().join("-");
+    const formattedTime = timePart.replace("Z", "");
+    return `${formattedDate} ${formattedTime}`;
   }
+
   return (
     <div className="container">
       <h1>Comparer les contributions Wikipedia </h1>
@@ -83,22 +92,21 @@ function App() {
           <div id="resultWikipedia">
             {resultCount < 0 ? (
               "the result will be displayed here"
-            ) : resultWikipedia.length == 0 ? (
+            ) : resultWikipedia.length === 0 ? (
               "there is not result for that user"
             ) : (
               <>
                 <h4 className="resultTitle">
-                  The result for the user {usernames} are{" "}
-                  {resultWikipedia.length}
+                  The result for the user {usernames} are {resultWikipedia.length}
                 </h4>
                 <div className="result">
-                  <h5>user</h5>
+                  <h5>Username</h5>
                   <h5>Title</h5>
-                  <h5>Date </h5>
+                  <h5>Date</h5>
                 </div>
-                {resultWikipedia?.map((el, index) => (
+                {resultWikipedia.map((el, index) => (
                   <div key={index} className="result">
-                    <h6> {el.user}</h6>
+                    <h6>{el.user}</h6>
                     <h6>{el.title}</h6>
                     <h6>{dateformat(el.timestamp)}</h6>
                   </div>
