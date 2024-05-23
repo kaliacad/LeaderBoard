@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import Dateformat from "./components/sidebar/dateFormat";
 
 function App() {
   const [usernames, setUsernames] = useState("");
@@ -32,13 +33,8 @@ function App() {
     }, 2000);
   };
 
-  function dateformat(date) {
-    let firstD = date.split("T")[0];
-    let secondD = date.split("T")[1].replace("Z", "");
-    date = firstD.split("T")[0].replaceAll("-", " ").split(" ");
-
-    return `${date[2]}-${date[1]}-${date[0]} ${secondD}`;
-  }
+  <Dateformat />
+  
   return (
     <div className="container">
       <h1>Comparer les contributions Wikipedia </h1>
