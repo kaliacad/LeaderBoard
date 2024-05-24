@@ -9,16 +9,19 @@ function App() {
   const [resultWikipedia, setResultWikipedia] = useState([]);
   const [resultCount, setResultCount] = useState(-1);
   const [resultCommons, setResultCommons] = useState("");
-  const inputRef = useRef()
+  const [inputValue, setInputValue] = useState("");
+  const inputRef = useRef();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    setUsernames(inputRef.current.value)
+    setUsernames(inputRef.current.value);
     console.log(inputRef);
-    
-    const usernameArray = inputRef.current.value.split(",").map((name) => name.trim());
+
+    const usernameArray = inputRef.current.value
+      .split(",")
+      .map((name) => name.trim());
 
     const contributionsByUser = await Promise.all(
       usernameArray.map(async (username) => {
@@ -37,7 +40,9 @@ function App() {
       })
     );
 
-    const allContributions = contributionsByUser.flatMap((user) => user.contributions);
+    const allContributions = contributionsByUser.flatMap(
+      (user) => user.contributions
+    );
     setResultWikipedia(allContributions);
     setResultCount(allContributions.length);
 
@@ -58,13 +63,15 @@ function App() {
       <div className="form-container">
         <form id="userForm" onSubmit={handleSubmit}>
           <label htmlFor="usernames">
-            Noms d'utilisateur (séparés par des virgules):
+            Nom de l'utilisateur (séparer par des virgules pour voir les
+            contributions de plusieurs utilisateurs):
           </label>
           <input
             type="text"
             id="usernames"
             name="usernames"
-            // value={usernames}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
             ref={inputRef}
             required
           />
@@ -88,8 +95,12 @@ function App() {
             onChange={(e) => setEndDate(e.target.value)}
             required
           />
-
-          <button type="submit">Comparer</button>
+          {inputValue.includes(",") &&
+          inputValue[inputValue.length - 1] != "," ? (
+            <button type="submit">Comparer</button>
+          ) : (
+            <button type="submit">Vérifier les contributions</button>
+          )}
         </form>
         <div>
           {loading && <div id="loader" className="loader"></div>}
@@ -101,7 +112,8 @@ function App() {
             ) : (
               <>
                 <h4 className="resultTitle">
-                  L'utilisateur {usernames} a {resultWikipedia.length} contribution(s)
+                  L'utilisateur {usernames} a {resultWikipedia.length}{" "}
+                  contribution(s)
                 </h4>
                 <div className="result">
                   <h5>Username</h5>
