@@ -99,7 +99,7 @@ function App() {
           inputValue[inputValue.length - 1] != "," ? (
             <button type="submit">Comparer</button>
           ) : (
-            <button type="submit">Vérifier contribution</button>
+            <button type="submit">Vérifier les contributions</button>
           )}
         </form>
         <div>
