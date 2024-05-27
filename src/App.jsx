@@ -8,7 +8,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [resultWikipedia, setResultWikipedia] = useState([]);
   const [resultCount, setResultCount] = useState(-1);
-  const [resultCommons, setResultCommons] = useState("");
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef();
 
@@ -17,7 +16,6 @@ function App() {
     setLoading(true);
 
     setUsernames(inputRef.current.value);
-    console.log(inputRef);
 
     const usernameArray = inputRef.current.value
       .split(",")
@@ -40,26 +38,23 @@ function App() {
       })
     );
 
-    const allContributions = contributionsByUser.flatMap(
-      (user) => user.contributions
+    const contributionsCountByUser = contributionsByUser.map((user) => ({
+      username: user.username,
+      count: user.contributions.length,
+    }));
+
+    const sortedUsers = contributionsCountByUser.sort(
+      (a, b) => b.count - a.count
     );
-    setResultWikipedia(allContributions);
-    setResultCount(allContributions.length);
 
+    setResultWikipedia(sortedUsers);
+    setResultCount(sortedUsers.reduce((sum, user) => sum + user.count, 0));
     setLoading(false);
-    setResultCommons("Résultats Commons...");
   };
-
-  function dateformat(date) {
-    const [datePart, timePart] = date.split("T");
-    const formattedDate = datePart.split("-").reverse().join("-");
-    const formattedTime = timePart.replace("Z", "");
-    return `${formattedDate} ${formattedTime}`;
-  }
 
   return (
     <div className="container">
-      <h1>Comparer les contributions Wikipedia </h1>
+      <h1>Comparer les contributions Wikipedia</h1>
       <div className="form-container">
         <form id="userForm" onSubmit={handleSubmit}>
           <label htmlFor="usernames">
@@ -95,8 +90,7 @@ function App() {
             onChange={(e) => setEndDate(e.target.value)}
             required
           />
-          {inputValue.includes(",") &&
-          inputValue[inputValue.length - 1] != "," ? (
+          {inputValue.includes(",") && inputValue[inputValue.length - 1] !== "," ? (
             <button type="submit">Comparer</button>
           ) : (
             <button type="submit">Vérifier les contributions</button>
@@ -106,25 +100,25 @@ function App() {
           {loading && <div id="loader" className="loader"></div>}
           <div id="resultWikipedia">
             {resultCount < 0 ? (
-              "Les resultats seront affichés ici"
+              "Les résultats seront affichés ici"
             ) : resultWikipedia.length === 0 ? (
-              "Aucun resultat pour cet utilisateur"
+              "Aucun résultat pour cet utilisateur"
             ) : (
               <>
                 <h4 className="resultTitle">
-                  L'utilisateur {usernames} a {resultWikipedia.length}{" "}
-                  contribution(s)
+                  Total des contributions : {resultCount}
                 </h4>
                 <div className="result">
                   <h5>Username</h5>
-                  <h5>Title</h5>
-                  <h5>Date</h5>
+                  <h5>Nombre de Contributions</h5>
                 </div>
-                {resultWikipedia.map((el, index) => (
+                {resultWikipedia.map((user, index) => (
                   <div key={index} className="result">
-                    <h6>{el.user}</h6>
-                    <h6>{el.title}</h6>
-                    <h6>{dateformat(el.timestamp)}</h6>
+                    <h6>
+                      {user.username}
+                      {index === 0 && <span className="badge">Gagnant</span>}
+                    </h6>
+                    <h6>{user.count}</h6>
                   </div>
                 ))}
               </>
