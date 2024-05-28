@@ -8,6 +8,7 @@ body {
   margin: 0;
   padding: 0;
 }
+
 .badge {
   background-color: rgb(255, 196, 0);
   color: black;
@@ -19,24 +20,36 @@ body {
 
 .container {
   margin: 50px auto;
-
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   text-align: center;
+  min-height: 100vh;
+  padding: 20px;
+  color: white; /* Ensure text is readable */
 }
 
 h1 {
   color: #333;
 }
 
+h2 {
+  color: #555;
+}
+
 .form-container {
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
 form {
   width: 30vw;
   margin: 3vw;
   display: flex;
   flex-direction: column;
   padding: 20px;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 }
@@ -60,15 +73,19 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 button:hover {
   background-color: #29d384 !important;
 }
 
-#resultWikipedia,
-#resultCommons {
+#resultWikipedia {
   margin-top: 20px;
+  background-color: rgba(0, 0, 0, 0.7); /* Dark background for contrast */
+  padding: 20px;
+  border-radius: 8px;
+  color: white;
 }
 
 .loader {
@@ -85,37 +102,38 @@ button:hover {
 .loader {
   display: block; /* Sera affiché dynamiquement par React */
 }
+
 .result {
   display: flex;
-  gap: 20px;
-
-  width: 50vw;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
 }
+
 .resultTitle {
   margin-bottom: 20px;
   color: #05614a;
 }
-h6,
-h5 {
-  width: 75%;
-  padding-left: 10px;
-  text-align: left;
+
+.userResult {
+  background-color: rgba(0, 0, 0, 0.5);
 }
-h6:first-of-type,
-h5:first-of-type {
-  width: 20%;
+
+h6, h5 {
+  margin: 0;
 }
-h6:last-of-type,
-h5:last-of-type {
-  width: 30%;
+
+h6 {
+  display: flex;
+  align-items: center;
 }
-h5 {
-  background-color: #b1e4cd;
+
+h6 .badge {
+  margin-left: 10px;
 }
-h5:first-of-type,
-h5:last-of-type {
-  background-color: #b3d2e6;
-}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
