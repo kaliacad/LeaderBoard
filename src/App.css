@@ -19,7 +19,7 @@ body {
 }
 
 .container {
-  margin: 50px auto;
+  margin: auto;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -29,8 +29,12 @@ body {
   color: white; /* Ensure text is readable */
 }
 
-h1 {
+.main-title {
+  display: inline-block;
+  padding: 1px 50px;
+  border-radius: 5px;
   color: #333;
+  background-color: #e5e4e4;
 }
 
 h2 {
@@ -39,24 +43,35 @@ h2 {
 
 .form-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
 form {
-  width: 30vw;
-  margin: 3vw;
+  width: 70vw;
+  margin: auto;
   display: flex;
   flex-direction: column;
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+}
+.form-main-div {
+  display: flex;
+  gap: 10%;
+}
+.form-main-div > div {
+  display: flex;
+  flex-direction: column;
+  width: 20%;
+  gap: 1px;
+}
+.form-main-div > div:first-of-type {
+  width: 50%;
 }
 
-label {
+.label {
   margin-bottom: 10px;
-  color: #555;
+  color: #fff;
 }
 
 input {
@@ -81,11 +96,12 @@ button:hover {
 }
 
 #resultWikipedia {
+  width: 45vw;
   margin-top: 20px;
-  background-color: rgba(0, 0, 0, 0.7); /* Dark background for contrast */
+  background-color: white; /* Dark background for contrast */
   padding: 20px;
   border-radius: 8px;
-  color: white;
+  color: black;
 }
 
 .loader {
@@ -111,7 +127,26 @@ button:hover {
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 4px;
 }
+.results {
+  display: flex;
+  gap: 20px;
+  justify-content: space-around;
+}
+.results2 {
+  margin-top: 25px;
+}
 
+.results > div:first-of-type {
+  width: 20px;
+  font-size: 12px;
+}
+.user-contribs {
+  display: flex;
+  flex-direction: column;
+}
+.results > div > span {
+  font-size: 10px;
+}
 .resultTitle {
   margin-bottom: 20px;
   color: #05614a;
@@ -121,7 +156,8 @@ button:hover {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-h6, h5 {
+h6,
+h5 {
   margin: 0;
 }
 
@@ -140,5 +176,31 @@ h6 .badge {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+@media only screen and (max-width: 600px) {
+  container {
+    width: 100%;
+  }
+  form {
+    width: 100vw;
+    padding: 0 0px;
+  }
+  .form-main-div {
+    display: flex;
+    gap: 10px;
+  }
+  .form-main-div > div {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    gap: 1px;
+  }
+  .form-main-div > div:first-of-type {
+    width: 40%;
+  }
+  button {
+    width: 200px;
+    margin: auto;
   }
 }
