@@ -1,15 +1,34 @@
-import { useRef, useState } from "react";
-import "./App.css";
+import React, { useEffect, useState, useRef } from 'react';
+import './App.css';
 
 function App() {
-  const [usernames, setUsernames] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [usernames, setUsernames] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(false);
   const [resultWikipedia, setResultWikipedia] = useState([]);
   const [resultCount, setResultCount] = useState(-1);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
+  const [featuredImage, setFeaturedImage] = useState('');
   const inputRef = useRef();
+
+  useEffect(() => {
+    const fetchFeaturedImages = async () => {
+      try {
+        const response = await fetch(
+          'https://commons.wikimedia.org/w/api.php?action=query&generator=categorymembers&gcmtitle=Category:Featured_pictures_on_Wikimedia_Commons&gcmtype=file&gcmlimit=10&prop=imageinfo&iiprop=url&format=json&origin=*'
+        );
+        const data = await response.json();
+        const pages = data.query.pages;
+        const images = Object.keys(pages).map(key => pages[key].imageinfo[0].url);
+        const randomImage = images[Math.floor(Math.random() * images.length)];
+        setFeaturedImage(randomImage);
+      } catch (error) {
+        console.error('Error fetching the featured images:', error);
+      }
+    };
+    fetchFeaturedImages();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,7 +37,7 @@ function App() {
     setUsernames(inputRef.current.value);
 
     const usernameArray = inputRef.current.value
-      .split(",")
+      .split(',')
       .map((name) => name.trim());
 
     const contributionsByUser = await Promise.all(
@@ -53,7 +72,7 @@ function App() {
   };
 
   return (
-    <div className="container">
+    <div className="container" style={{ backgroundImage: `url(${featuredImage})` }}>
       <h1>Wiki Leaderboard</h1>
       <h2>Comparer les contributions Wikipedia</h2>
       <div className="form-container">
