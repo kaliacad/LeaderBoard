@@ -54,7 +54,8 @@ function App() {
 
   return (
     <div className="container">
-      <h1>Comparer les contributions Wikipedia</h1>
+      <h1>Wiki Leaderboard</h1>
+      <h2>Comparer les contributions Wikipedia</h2>
       <div className="form-container">
         <form id="userForm" onSubmit={handleSubmit}>
           <label htmlFor="usernames">
