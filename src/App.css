@@ -18,6 +18,15 @@ body {
   font-weight: bold;
 }
 
+.chart-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+}
+
 .container {
   margin: auto;
   background-size: cover;
@@ -55,16 +64,19 @@ form {
   flex-direction: column;
   padding: 20px;
 }
+
 .form-main-div {
   display: flex;
   gap: 10%;
 }
+
 .form-main-div > div {
   display: flex;
   flex-direction: column;
   width: 20%;
   gap: 1px;
 }
+
 .form-main-div > div:first-of-type {
   width: 50%;
 }
@@ -127,11 +139,13 @@ button:hover {
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 4px;
 }
+
 .results {
   display: flex;
   gap: 20px;
   justify-content: space-around;
 }
+
 .results2 {
   margin-top: 25px;
 }
@@ -140,13 +154,16 @@ button:hover {
   width: 20px;
   font-size: 12px;
 }
+
 .user-contribs {
   display: flex;
   flex-direction: column;
 }
+
 .results > div > span {
   font-size: 10px;
 }
+
 .resultTitle {
   margin-bottom: 20px;
   color: #05614a;
@@ -178,27 +195,50 @@ h6 .badge {
     transform: rotate(360deg);
   }
 }
+
+.results-and-chart {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px;
+}
+
+.results-container {
+  flex: 1;
+  padding: 20px;
+}
+
+.chart-container {
+  flex: 1;
+  padding: 20px;
+}
+
 @media only screen and (max-width: 600px) {
-  container {
+  .container {
     width: 100%;
   }
+
   form {
     width: 100vw;
     padding: 0 0px;
   }
+
   .form-main-div {
     display: flex;
     gap: 10px;
   }
+
   .form-main-div > div {
     display: flex;
     flex-direction: column;
     width: 25%;
     gap: 1px;
   }
+
   .form-main-div > div:first-of-type {
     width: 40%;
   }
+
   button {
     width: 200px;
     margin: auto;

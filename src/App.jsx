@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Line } from "react-chartjs-2";
+import "chart.js/auto";
 import "./App.css";
 
 function App() {
@@ -11,7 +13,11 @@ function App() {
   const [inputValue, setInputValue] = useState("");
   const [featuredImage, setFeaturedImage] = useState("");
   const inputRef = useRef();
-  const [userContribs, setUserContribs] = useState();
+  const [userContribs, setUserContribs] = useState([]);
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [],
+  });
 
   useEffect(() => {
     const fetchFeaturedImages = async () => {
@@ -64,7 +70,7 @@ function App() {
       username: user.username,
       count: user.contributions.length,
     }));
-    console.log("contributions", contributionsCountByUser);
+
     setUserContribs(contributionsCountByUser);
     const sortedUsers = contributionsCountByUser.sort(
       (a, b) => b.count - a.count
@@ -73,6 +79,40 @@ function App() {
     setResultWikipedia(sortedUsers);
     setResultCount(sortedUsers.reduce((sum, user) => sum + user.count, 0));
     setLoading(false);
+
+    // Prepare chart data
+    const allDates = Array.from(
+      new Set(
+        contributionsByUser.flatMap((user) =>
+          user.contributions.map((contrib) => contrib.timestamp.split("T")[0])
+        )
+      )
+    ).sort();
+    const datasets = contributionsByUser.map((user) => {
+      const userContributionsByDate = allDates.map((date) =>
+        user.contributions.filter((contrib) => contrib.timestamp.startsWith(date)).length
+      );
+      return {
+        label: user.username,
+        data: userContributionsByDate,
+        borderColor: getRandomColor(),
+        backgroundColor: getRandomColor(0.2),
+        fill: true,
+      };
+    });
+
+    setChartData({
+      labels: allDates,
+      datasets: datasets,
+    });
+  };
+
+  // Function to generate a random color
+  const getRandomColor = (alpha = 1) => {
+    const r = Math.floor(Math.random() * 255);
+    const g = Math.floor(Math.random() * 255);
+    const b = Math.floor(Math.random() * 255);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
   return (
@@ -97,7 +137,7 @@ function App() {
                 required
               />
               <span className="label" htmlFor="startDate">
-                uernames
+                Usernames
               </span>
             </div>
             <div>
@@ -110,7 +150,7 @@ function App() {
                 required
               />
               <span className="label" htmlFor="startDate">
-                Date de début
+                Start Date
               </span>
             </div>
             <div>
@@ -123,7 +163,7 @@ function App() {
                 required
               />
               <span className="label" htmlFor="endDate">
-                Date de fin
+                End Date
               </span>
             </div>
           </div>
@@ -135,7 +175,10 @@ function App() {
             <button type="submit">Vérifier les contributions</button>
           )}
         </form>
-        <div>
+      </div>
+
+      <div className="results-and-chart">
+        <div className="results-container">
           {loading && <div id="loader" className="loader"></div>}
           <div id="resultWikipedia">
             {resultCount < 0 ? (
@@ -174,6 +217,14 @@ function App() {
               </>
             )}
           </div>
+        </div>
+
+        <div className="chart-container">
+          {chartData && chartData.datasets.length > 0 ? (
+            <Line data={chartData} />
+          ) : (
+            <div>Aucune donnée à afficher</div>
+          )}
         </div>
       </div>
     </div>
