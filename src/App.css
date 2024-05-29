@@ -110,11 +110,11 @@ button:hover {
 
 #resultWikipedia {
   width: 45vw;
-
   background-color: white; /* Dark background for contrast */
-
   border-radius: 8px;
   color: black;
+  box-sizing: border-box;
+  padding: 10px;
 }
 
 .loader {
@@ -175,7 +175,8 @@ button:hover {
 }
 
 .resultTitle {
-  margin-bottom: 20px;
+  margin : 0;
+  font-size: 1.6rem;
   color: #05614a;
 }
 
@@ -213,10 +214,10 @@ h6 .badge {
   padding: 20px;
 }
 
-.results-container {
+/* .results-container {
   flex: 1;
   padding: 20px;
-}
+} */
 
 .chart-container {
   flex: 1;

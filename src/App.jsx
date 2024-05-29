@@ -190,7 +190,7 @@ function App() {
               "Aucun résultat pour cet utilisateur"
             ) : (
               <>
-                <h4 className="resultTitle">Results</h4>
+                <h4 className="resultTitle">Resultats</h4>
                 <div className="results results1">
                   <div></div>
                   <div>
