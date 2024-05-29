@@ -19,9 +19,9 @@ body {
 }
 
 .chart-container {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
+  width: 800px;
+  margin: 0 50px;
+  height: 200px;
   padding: 20px;
   background: rgba(255, 255, 255, 0.8);
   border-radius: 8px;
@@ -35,6 +35,7 @@ body {
   text-align: center;
   min-height: 100vh;
   padding: 20px;
+  overflow: hidden;
   color: white; /* Ensure text is readable */
 }
 
@@ -109,9 +110,9 @@ button:hover {
 
 #resultWikipedia {
   width: 45vw;
-  margin-top: 20px;
+
   background-color: white; /* Dark background for contrast */
-  padding: 20px;
+
   border-radius: 8px;
   color: black;
 }
@@ -143,18 +144,27 @@ button:hover {
 .results {
   display: flex;
   gap: 20px;
-  justify-content: space-around;
 }
 
 .results2 {
+  display: flex;
+
   margin-top: 25px;
 }
+.results > div {
+  flex-grow: 2;
 
+  text-align: left;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
 .results > div:first-of-type {
-  width: 20px;
+  max-width: 20px;
   font-size: 12px;
 }
-
+.results > div:last-of-type {
+  max-width: 15%;
+}
 .user-contribs {
   display: flex;
   flex-direction: column;

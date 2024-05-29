@@ -191,7 +191,7 @@ function App() {
             ) : (
               <>
                 <h4 className="resultTitle">Results</h4>
-                <div className="results">
+                <div className="results results1">
                   <div></div>
                   <div>
                     <h5>{resultCount}</h5>
