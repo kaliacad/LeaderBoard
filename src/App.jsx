@@ -198,6 +198,7 @@ function App() {
                   </div>
                   <div>
                     <h5>34</h5>
+                    {/* fix */}
                     <span>Participants</span>
                   </div>
                 </div>
