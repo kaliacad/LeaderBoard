@@ -33,7 +33,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   text-align: center;
-  min-height: 100vh;
+  min-height: 90vh;
   padding: 20px;
   overflow: hidden;
   color: white; /* Ensure text is readable */
@@ -254,4 +254,22 @@ h6 .badge {
     width: 200px;
     margin: auto;
   }
+}
+
+.footer {
+  display: flex;
+  justify-content: space-around;
+  background-color: red;
+  padding: 10px 0;
+  border-top: 1px solid #ccc;
+}
+
+.footer-link {
+  color: #333;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
 }

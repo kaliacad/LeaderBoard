@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import "./App.css";
+import { Footer } from "./footer";
 
 function App() {
   const [usernames, setUsernames] = useState("");
@@ -119,116 +120,119 @@ function App() {
   };
 
   return (
-    <div
-      className="container"
-      style={{ backgroundImage: `url(${featuredImage})` }}
-    >
-      <h1 className="main-title">Wiki Leaderboard</h1>
+    <div>
+      <div
+        className="container"
+        style={{ backgroundImage: `url(${featuredImage})` }}
+      >
+        <h1 className="main-title">Wiki Leaderboard</h1>
 
-      <div className="form-container">
-        <form id="userForm" onSubmit={handleSubmit}>
-          <div className="form-main-div">
-            <div>
-              <input
-                type="text"
-                id="usernames"
-                name="usernames"
-                placeholder="users1, users2, users3"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                ref={inputRef}
-                required
-              />
-              <span className="label" htmlFor="startDate">
-                Usernames
-              </span>
+        <div className="form-container">
+          <form id="userForm" onSubmit={handleSubmit}>
+            <div className="form-main-div">
+              <div>
+                <input
+                  type="text"
+                  id="usernames"
+                  name="usernames"
+                  placeholder="users1, users2, users3"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  ref={inputRef}
+                  required
+                />
+                <span className="label" htmlFor="startDate">
+                  Usernames
+                </span>
+              </div>
+              <div>
+                <input
+                  type="date"
+                  id="startDate"
+                  name="startDate"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  required
+                />
+                <span className="label" htmlFor="startDate">
+                  Start Date
+                </span>
+              </div>
+              <div>
+                <input
+                  type="date"
+                  id="endDate"
+                  name="endDate"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  required
+                />
+                <span className="label" htmlFor="endDate">
+                  End Date
+                </span>
+              </div>
             </div>
-            <div>
-              <input
-                type="date"
-                id="startDate"
-                name="startDate"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                required
-              />
-              <span className="label" htmlFor="startDate">
-                Start Date
-              </span>
-            </div>
-            <div>
-              <input
-                type="date"
-                id="endDate"
-                name="endDate"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                required
-              />
-              <span className="label" htmlFor="endDate">
-                End Date
-              </span>
+
+            {inputValue.includes(",") &&
+              inputValue[inputValue.length - 1] !== "," ? (
+              <button type="submit">Comparer</button>
+            ) : (
+              <button type="submit">Vérifier les contributions</button>
+            )}
+          </form>
+        </div>
+
+        <div className="results-and-chart">
+          <div className="results-container">
+            {loading && <div id="loader" className="loader"></div>}
+            <div id="resultWikipedia">
+              {resultCount < 0 ? (
+                "Les résultats seront affichés ici"
+              ) : resultWikipedia.length === 0 ? (
+                "Aucun résultat pour cet utilisateur"
+              ) : (
+                <>
+                  <h4 className="resultTitle">Resultats</h4>
+                  <div className="results results1">
+                    <div></div>
+                    <div>
+                      <h5>{resultCount}</h5>
+                      <span>Contributions</span>
+                    </div>
+                    <div>
+                      <h5>{usernames.split(",").length}</h5>
+                      {/* fix */}
+                      <span>Participants</span>
+                    </div>
+                  </div>
+                  {resultWikipedia.map((user, index) => (
+                    <div key={index} className="results results2">
+                      <div>{index + 1}</div>
+                      <div className="user-contribs">
+                        {" "}
+                        <strong>{user.username}</strong>{" "}
+                        <span>{userContribs[index].count} contributions</span>
+                      </div>
+                      <div>
+                        {index < 3 && <span className="badge">Gagnant</span>}
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
           </div>
 
-          {inputValue.includes(",") &&
-          inputValue[inputValue.length - 1] !== "," ? (
-            <button type="submit">Comparer</button>
-          ) : (
-            <button type="submit">Vérifier les contributions</button>
-          )}
-        </form>
-      </div>
-
-      <div className="results-and-chart">
-        <div className="results-container">
-          {loading && <div id="loader" className="loader"></div>}
-          <div id="resultWikipedia">
-            {resultCount < 0 ? (
-              "Les résultats seront affichés ici"
-            ) : resultWikipedia.length === 0 ? (
-              "Aucun résultat pour cet utilisateur"
+          <div className="chart-container">
+            {chartData && chartData.datasets.length > 0 ? (
+              <Line data={chartData} />
             ) : (
-              <>
-                <h4 className="resultTitle">Resultats</h4>
-                <div className="results results1">
-                  <div></div>
-                  <div>
-                    <h5>{resultCount}</h5>
-                    <span>Contributions</span>
-                  </div>
-                  <div>
-                    <h5>{usernames.split(",").length}</h5>
-                    {/* fix */}
-                    <span>Participants</span>
-                  </div>
-                </div>
-                {resultWikipedia.map((user, index) => (
-                  <div key={index} className="results results2">
-                    <div>{index + 1}</div>
-                    <div className="user-contribs">
-                      {" "}
-                      <strong>{user.username}</strong>{" "}
-                      <span>{userContribs[index].count} contributions</span>
-                    </div>
-                    <div>
-                      {index < 3 && <span className="badge">Gagnant</span>}
-                    </div>
-                  </div>
-                ))}
-              </>
+              <div>Aucune donnée à afficher</div>
             )}
           </div>
         </div>
-
-        <div className="chart-container">
-          {chartData && chartData.datasets.length > 0 ? (
-            <Line data={chartData} />
-          ) : (
-            <div>Aucune donnée à afficher</div>
-          )}
-        </div>
       </div>
+      <Footer />
     </div>
   );
 }
