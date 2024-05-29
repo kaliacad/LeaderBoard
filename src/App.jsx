@@ -89,8 +89,11 @@ function App() {
       )
     ).sort();
     const datasets = contributionsByUser.map((user) => {
-      const userContributionsByDate = allDates.map((date) =>
-        user.contributions.filter((contrib) => contrib.timestamp.startsWith(date)).length
+      const userContributionsByDate = allDates.map(
+        (date) =>
+          user.contributions.filter((contrib) =>
+            contrib.timestamp.startsWith(date)
+          ).length
       );
       return {
         label: user.username,
@@ -187,17 +190,15 @@ function App() {
               "Aucun résultat pour cet utilisateur"
             ) : (
               <>
-                <h4 className="resultTitle">
-                  Total des contributions : {resultCount}
-                </h4>
+                <h4 className="resultTitle">Results</h4>
                 <div className="results">
                   <div></div>
                   <div>
-                    <h5>23</h5>
+                    <h5>{resultCount}</h5>
                     <span>Contributions</span>
                   </div>
                   <div>
-                    <h5>34</h5>
+                    <h5>{usernames.split(",").length}</h5>
                     {/* fix */}
                     <span>Participants</span>
                   </div>
