@@ -68,30 +68,38 @@ form {
 
 .form-main-div {
   display: flex;
-  gap: 10%;
+  gap: 2%;
 }
 
 .form-main-div > div {
   display: flex;
-  flex-direction: column;
-  width: 20%;
-  gap: 1px;
+
+  width: 30%;
 }
 
 .form-main-div > div:first-of-type {
-  width: 50%;
+  width: 40%;
 }
 
 .label {
-  margin-bottom: 10px;
-  color: #fff;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #46c876;
+  color: #000;
+  font-size: 12px;
+  border-radius: 6px 0 0 6px;
+  width: 35%;
+  box-sizing: border-box;
 }
 
 input {
   padding: 10px;
   margin-bottom: 20px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 0 6px 6px 0;
+  width: 65%;
 }
 
 button {
@@ -109,7 +117,7 @@ button:hover {
 }
 
 #resultWikipedia {
-  width: 45vw;
+  width: 300px;
   background-color: white; /* Dark background for contrast */
   border-radius: 8px;
   color: black;
@@ -143,7 +151,7 @@ button:hover {
 
 .results {
   display: flex;
-  gap: 20px;
+  gap: 2px;
 }
 
 .results2 {
@@ -152,18 +160,18 @@ button:hover {
   margin-top: 25px;
 }
 .results > div {
-  flex-grow: 2;
-
   text-align: left;
   padding: 0 10px;
   box-sizing: border-box;
+
+  width: 70%;
 }
 .results > div:first-of-type {
-  max-width: 20px;
+  width: 5%;
   font-size: 12px;
 }
 .results > div:last-of-type {
-  max-width: 15%;
+  width: 15%;
 }
 .user-contribs {
   display: flex;
@@ -175,7 +183,7 @@ button:hover {
 }
 
 .resultTitle {
-  margin : 0;
+  margin: 0;
   font-size: 1.6rem;
   color: #05614a;
 }
@@ -210,8 +218,10 @@ h6 .badge {
 .results-and-chart {
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  width: 76%;
   padding: 20px;
+  margin: 0 12%;
+  overflow: hidden;
 }
 
 /* .results-container {

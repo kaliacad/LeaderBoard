@@ -131,6 +131,9 @@ function App() {
           <form id="userForm" onSubmit={handleSubmit}>
             <div className="form-main-div">
               <div>
+                <span className="label" htmlFor="startDate">
+                  Usernames
+                </span>
                 <input
                   type="text"
                   id="usernames"
@@ -141,11 +144,11 @@ function App() {
                   ref={inputRef}
                   required
                 />
-                <span className="label" htmlFor="startDate">
-                  Usernames
-                </span>
               </div>
               <div>
+                <span className="label" htmlFor="startDate">
+                  Start Date
+                </span>
                 <input
                   type="date"
                   id="startDate"
@@ -154,11 +157,11 @@ function App() {
                   onChange={(e) => setStartDate(e.target.value)}
                   required
                 />
-                <span className="label" htmlFor="startDate">
-                  Start Date
-                </span>
               </div>
               <div>
+                <span className="label" htmlFor="endDate">
+                  End Date
+                </span>
                 <input
                   type="date"
                   id="endDate"
@@ -167,14 +170,11 @@ function App() {
                   onChange={(e) => setEndDate(e.target.value)}
                   required
                 />
-                <span className="label" htmlFor="endDate">
-                  End Date
-                </span>
               </div>
             </div>
 
             {inputValue.includes(",") &&
-              inputValue[inputValue.length - 1] !== "," ? (
+            inputValue[inputValue.length - 1] !== "," ? (
               <button type="submit">Comparer</button>
             ) : (
               <button type="submit">Vérifier les contributions</button>
