@@ -8,6 +8,7 @@ body {
   margin: 0;
   padding: 0;
 }
+
 .badge {
   background-color: rgb(255, 196, 0);
   color: black;
@@ -17,33 +18,73 @@ body {
   font-weight: bold;
 }
 
-.container {
-  margin: 50px auto;
-
-  text-align: center;
+.chart-container {
+  width: 800px;
+  margin: 0 50px;
+  height: 200px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
 }
 
-h1 {
+.container {
+  margin: auto;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-align: center;
+  min-height: 90vh;
+  padding: 20px;
+  overflow: hidden;
+  color: white; /* Ensure text is readable */
+}
+
+.main-title {
+  display: inline-block;
+  padding: 1px 50px;
+  border-radius: 5px;
   color: #333;
+  background-color: #e5e4e4;
+}
+
+h2 {
+  color: #555;
 }
 
 .form-container {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
+
 form {
-  width: 30vw;
-  margin: 3vw;
+  width: 70vw;
+  margin: auto;
   display: flex;
   flex-direction: column;
   padding: 20px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
 }
 
-label {
+.form-main-div {
+  display: flex;
+  gap: 10%;
+}
+
+.form-main-div > div {
+  display: flex;
+  flex-direction: column;
+  width: 20%;
+  gap: 1px;
+}
+
+.form-main-div > div:first-of-type {
+  width: 50%;
+}
+
+.label {
   margin-bottom: 10px;
-  color: #555;
+  color: #fff;
 }
 
 input {
@@ -60,15 +101,20 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 button:hover {
   background-color: #29d384 !important;
 }
 
-#resultWikipedia,
-#resultCommons {
-  margin-top: 20px;
+#resultWikipedia {
+  width: 45vw;
+  background-color: white; /* Dark background for contrast */
+  border-radius: 8px;
+  color: black;
+  box-sizing: border-box;
+  padding: 10px;
 }
 
 .loader {
@@ -85,37 +131,73 @@ button:hover {
 .loader {
   display: block; /* Sera affiché dynamiquement par React */
 }
+
 .result {
   display: flex;
-  gap: 20px;
-
-  width: 50vw;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
 }
+
+.results {
+  display: flex;
+  gap: 20px;
+}
+
+.results2 {
+  display: flex;
+
+  margin-top: 25px;
+}
+.results > div {
+  flex-grow: 2;
+
+  text-align: left;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+.results > div:first-of-type {
+  max-width: 20px;
+  font-size: 12px;
+}
+.results > div:last-of-type {
+  max-width: 15%;
+}
+.user-contribs {
+  display: flex;
+  flex-direction: column;
+}
+
+.results > div > span {
+  font-size: 10px;
+}
+
 .resultTitle {
-  margin-bottom: 20px;
+  margin : 0;
+  font-size: 1.6rem;
   color: #05614a;
 }
+
+.userResult {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 h6,
 h5 {
-  width: 75%;
-  padding-left: 10px;
-  text-align: left;
+  margin: 0;
 }
-h6:first-of-type,
-h5:first-of-type {
-  width: 20%;
+
+h6 {
+  display: flex;
+  align-items: center;
 }
-h6:last-of-type,
-h5:last-of-type {
-  width: 30%;
+
+h6 .badge {
+  margin-left: 10px;
 }
-h5 {
-  background-color: #b1e4cd;
-}
-h5:first-of-type,
-h5:last-of-type {
-  background-color: #b3d2e6;
-}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -123,4 +205,71 @@ h5:last-of-type {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.results-and-chart {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px;
+}
+
+/* .results-container {
+  flex: 1;
+  padding: 20px;
+} */
+
+.chart-container {
+  flex: 1;
+  padding: 20px;
+}
+
+@media only screen and (max-width: 600px) {
+  .container {
+    width: 100%;
+  }
+
+  form {
+    width: 100vw;
+    padding: 0 0px;
+  }
+
+  .form-main-div {
+    display: flex;
+    gap: 10px;
+  }
+
+  .form-main-div > div {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    gap: 1px;
+  }
+
+  .form-main-div > div:first-of-type {
+    width: 40%;
+  }
+
+  button {
+    width: 200px;
+    margin: auto;
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: space-around;
+  /* background-color: red; */
+  padding: 10px 0;
+  border-top: 1px solid #ccc;
+}
+
+.footer-link {
+  color: #333;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
 }
