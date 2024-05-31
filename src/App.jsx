@@ -3,6 +3,7 @@ import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import "./App.css";
 import { Footer } from "./footer";
+import { useParams } from "react-router-dom";
 
 function App() {
   const [usernames, setUsernames] = useState("");
@@ -42,6 +43,9 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log("params", useParams());
+
     setLoading(true);
 
     setUsernames(inputRef.current.value);
@@ -109,6 +113,14 @@ function App() {
       labels: allDates,
       datasets: datasets,
     });
+
+    try {
+      const params = ` ${usernames}_${startDate}_${endDate}`;
+      window.location.href =
+        window.location.origin + window.location.pathname + "?" + params;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Function to generate a random color
