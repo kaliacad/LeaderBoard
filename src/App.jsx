@@ -192,7 +192,9 @@ function App() {
                 "Aucun résultat pour cet utilisateur"
               ) : (
                 <>
-                  <h4 className="resultTitle">Resultats</h4>
+                  <h4 className="resultTitle">
+                    Resultats du {startDate} au {endDate}
+                  </h4>
                   <div className="results results1">
                     <div></div>
                     <div>

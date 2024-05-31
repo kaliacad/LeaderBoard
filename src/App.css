@@ -183,8 +183,8 @@ button:hover {
 }
 
 .resultTitle {
-  margin: 0;
-  font-size: 1.6rem;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
   color: #05614a;
 }
 
