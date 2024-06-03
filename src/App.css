@@ -139,7 +139,9 @@ button:hover {
 .loader {
   display: block; /* Sera affiché dynamiquement par React */
 }
-
+.share-button {
+  font-size: 9px;
+}
 .result {
   display: flex;
   justify-content: space-between;
