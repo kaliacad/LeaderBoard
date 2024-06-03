@@ -1,6 +1,7 @@
 # LeaderBoard
 
 LeaderBoard est une application servant de comparateur 
+<img title="a title" alt="Alt text" src="./demo.png">
 
 ## Features
 
@@ -50,10 +51,18 @@ Open http://localhost:3000 to view it in your browser.
 
 ### Folder Structure
 
-- `public/` - Static files
-- `src/` - Source code
-  - `components/` - React components
-  - `styles/` - CSS files
+.
+├── public/          
+│   └── index.html
+├── src/             
+│   ├── components/  
+│   │   └── App.js
+│   └── styles/      
+│       └── App.css
+├── .gitignore
+├── package.json
+└── README.md
+
 
 ### License
 This project is licensed under the MIT License.
