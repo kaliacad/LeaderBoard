@@ -1,10 +1,14 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import "./App.css";
 import { Footer } from "./footer";
 
 function App() {
+  const [theUrl, setTheUrl] = useState(
+    window.location.origin + window.location.pathname
+  );
+
   const [usernames, setUsernames] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -19,7 +23,8 @@ function App() {
     labels: [],
     datasets: [],
   });
-
+  const [newUrl, setNewUrl] = useState();
+  const [copiedLink, setCopiedLink] = useState(false);
   useEffect(() => {
     const fetchFeaturedImages = async () => {
       try {
@@ -40,22 +45,28 @@ function App() {
     fetchFeaturedImages();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  async function makeTheSearch(usernames, startDate, endDate) {
     setLoading(true);
 
-    setUsernames(inputRef.current.value);
+    let usernameArray = "";
+    if (inputRef?.current?.value) {
+      usernameArray = inputRef.current.value
+        .split(",")
+        .map((name) => name.trim());
+    } else {
+      // setUsernames(usernames);
 
-    const usernameArray = inputRef.current.value
-      .split(",")
-      .map((name) => name.trim());
+      usernameArray = usernames.split(",").map((name) => name.trim());
+    }
 
     const contributionsByUser = await Promise.all(
       usernameArray.map(async (username) => {
         const response = await fetch(
           `https://fr.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
         );
+
         const data = await response.json();
+
         const contributions = data.query.usercontribs.filter((contribution) => {
           const contributionDate = new Date(contribution.timestamp);
           return (
@@ -63,6 +74,7 @@ function App() {
             contributionDate <= new Date(endDate)
           );
         });
+
         return { username, contributions };
       })
     );
@@ -109,6 +121,16 @@ function App() {
       labels: allDates,
       datasets: datasets,
     });
+    let params = `${usernames}_${startDate}_${endDate}`;
+    params = params.replaceAll(",", "**");
+    params = params.replaceAll(" ", "");
+
+    setNewUrl(theUrl + params);
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    makeTheSearch(usernames, startDate, endDate);
   };
 
   // Function to generate a random color
@@ -118,6 +140,37 @@ function App() {
     const b = Math.floor(Math.random() * 255);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
+
+  //function to cpoy the link
+  async function handleShareLink() {
+    if (theUrl.includes("/") && theUrl[theUrl.length - 1] != "/") {
+      await navigator.clipboard.writeText(theUrl);
+    } else {
+      await navigator.clipboard.writeText(newUrl);
+    }
+  }
+
+  useEffect(() => {
+    if (theUrl.includes("/") && theUrl[theUrl.length - 1] != "/") {
+      setCopiedLink(true);
+
+      let params = theUrl.split("/")[3].split("_");
+      console.log("params", params[1]);
+      let users = params[0].replaceAll("**", ",");
+      setInputValue(users);
+      setUsernames(users);
+      setStartDate(params[1]);
+      setEndDate(params[2]);
+
+      makeTheSearch(users, params[1], params[2]);
+    }
+  }, []);
+
+  function dateFormat(data) {
+    data = data.split("-");
+    data = data[1] + "/" + data[2] + "/" + data[0];
+    return data;
+  }
 
   return (
     <div>
@@ -139,8 +192,9 @@ function App() {
                   id="usernames"
                   name="usernames"
                   placeholder="users1, users2, users3"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
+                  // value={inputValue}
+                  value={usernames}
+                  onChange={(e) => setUsernames(e.target.value)}
                   ref={inputRef}
                   required
                 />
@@ -193,7 +247,10 @@ function App() {
               ) : (
                 <>
                   <h4 className="resultTitle">
-                    Resultats du {startDate} au {endDate}
+                    Resultats du {dateFormat(startDate)} -{dateFormat(endDate)}{" "}
+                    <button className="share-button" onClick={handleShareLink}>
+                      Cliquez pour copier le lien(Share)
+                    </button>
                   </h4>
                   <div className="results results1">
                     <div></div>
