@@ -46,6 +46,13 @@ body {
   color: #333;
   background-color: #e5e4e4;
 }
+.language {
+  width: 40px;
+  height: 25px;
+  border: none;
+  background-color: #29d384;
+  color: white;
+}
 
 h2 {
   color: #555;
