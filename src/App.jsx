@@ -155,7 +155,6 @@ function App() {
       setCopiedLink(true);
 
       let params = theUrl.split("/")[3].split("_");
-      console.log("params", params[1]);
       let users = params[0].replaceAll("**", ",");
       setInputValue(users);
       setUsernames(users);
@@ -178,8 +177,15 @@ function App() {
         className="container"
         style={{ backgroundImage: `url(${featuredImage})` }}
       >
-        <h1 className="main-title">Wiki Leaderboard</h1>
-
+        <h1 className="main-title">Wiki Leaderboard</h1>{" "}
+        <select class="language">
+          <option value="en">en</option>
+          <option value="fr" selected>
+            fr
+          </option>
+          <option value="ln">ln</option>
+          <option value="sw">sw</option>
+        </select>
         <div className="form-container">
           <form id="userForm" onSubmit={handleSubmit}>
             <div className="form-main-div">
@@ -235,7 +241,6 @@ function App() {
             )}
           </form>
         </div>
-
         <div className="results-and-chart">
           <div className="results-container">
             {loading && <div id="loader" className="loader"></div>}
