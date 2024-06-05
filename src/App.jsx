@@ -17,6 +17,7 @@ function App() {
   const [resultCount, setResultCount] = useState(-1);
   const [inputValue, setInputValue] = useState("");
   const [featuredImage, setFeaturedImage] = useState("");
+  const [language, setLanguage] = useState("fr"); // Ajout d'un état pour la langue sélectionnée
   const inputRef = useRef();
   const [userContribs, setUserContribs] = useState([]);
   const [chartData, setChartData] = useState({
@@ -25,6 +26,7 @@ function App() {
   });
   const [newUrl, setNewUrl] = useState();
   const [copiedLink, setCopiedLink] = useState(false);
+
   useEffect(() => {
     const fetchFeaturedImages = async () => {
       try {
@@ -54,15 +56,13 @@ function App() {
         .split(",")
         .map((name) => name.trim());
     } else {
-      // setUsernames(usernames);
-
       usernameArray = usernames.split(",").map((name) => name.trim());
     }
 
     const contributionsByUser = await Promise.all(
       usernameArray.map(async (username) => {
         const response = await fetch(
-          `https://fr.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
+          `https://${language}.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
         );
 
         const data = await response.json();
@@ -133,6 +133,10 @@ function App() {
     makeTheSearch(usernames, startDate, endDate);
   };
 
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value);
+  };
+
   // Function to generate a random color
   const getRandomColor = (alpha = 1) => {
     const r = Math.floor(Math.random() * 255);
@@ -141,7 +145,7 @@ function App() {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
-  //function to cpoy the link
+  // Function to copy the link
   async function handleShareLink() {
     if (theUrl.includes("/") && theUrl[theUrl.length - 1] != "/") {
       await navigator.clipboard.writeText(theUrl);
@@ -178,11 +182,9 @@ function App() {
         style={{ backgroundImage: `url(${featuredImage})` }}
       >
         <h1 className="main-title">Wiki Leaderboard</h1>{" "}
-        <select class="language">
+        <select className="language" value={language} onChange={handleLanguageChange}>
           <option value="en">en</option>
-          <option value="fr" selected>
-            fr
-          </option>
+          <option value="fr">fr</option>
           <option value="ln">ln</option>
           <option value="sw">sw</option>
         </select>
@@ -198,7 +200,6 @@ function App() {
                   id="usernames"
                   name="usernames"
                   placeholder="users1, users2, users3"
-                  // value={inputValue}
                   value={usernames}
                   onChange={(e) => setUsernames(e.target.value)}
                   ref={inputRef}
@@ -252,9 +253,9 @@ function App() {
               ) : (
                 <>
                   <h4 className="resultTitle">
-                    Resultats du {dateFormat(startDate)} -{dateFormat(endDate)}{" "}
+                    Resultats du {dateFormat(startDate)} - {dateFormat(endDate)}{" "}
                     <button className="share-button" onClick={handleShareLink}>
-                      Cliquez pour copier le lien(Share)
+                      Cliquez pour copier le lien (Share)
                     </button>
                   </h4>
                   <div className="results results1">
@@ -265,7 +266,6 @@ function App() {
                     </div>
                     <div>
                       <h5>{usernames.split(",").length}</h5>
-                      {/* fix */}
                       <span>Participants</span>
                     </div>
                   </div>
@@ -273,8 +273,7 @@ function App() {
                     <div key={index} className="results results2">
                       <div>{index + 1}</div>
                       <div className="user-contribs">
-                        {" "}
-                        <strong>{user.username}</strong>{" "}
+                        <strong>{user.username}</strong>
                         <span>{userContribs[index].count} contributions</span>
                       </div>
                       <div>
