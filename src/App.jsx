@@ -9,8 +9,7 @@ import DropdownMenu from './Dropmenu';
 function App() {
   const [theUrl, setTheUrl] = useState(window.location.origin + window.location.pathname);
   const [usernames, setUsernames] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+
   const [loading, setLoading] = useState(false);
   const [resultWikipedia, setResultWikipedia] = useState([]);
   const [resultCount, setResultCount] = useState(-1);
@@ -22,6 +21,13 @@ function App() {
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
   const [newUrl, setNewUrl] = useState();
   const [copiedLink, setCopiedLink] = useState(false);
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 30);
+  const today = new Date();
+  today.setDate(today.getDate());
+  const [startDate, setStartDate] = useState(yesterday.toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(today.toISOString().split('T')[0]);
 
   useEffect(() => {
     const fetchFeaturedImages = async () => {
@@ -235,7 +241,7 @@ function App() {
             </div>
 
             {inputValue.includes(',') &&
-            inputValue[inputValue.length - 1] !== ',' ? (
+              inputValue[inputValue.length - 1] !== ',' ? (
               <button type="submit">Comparer</button>
             ) : (
               <button type="submit">Vérifier les contributions</button>
@@ -257,7 +263,7 @@ function App() {
                     <button className="share-button" onClick={handleShareLink}>
                       Cliquez pour copier le lien (Share)
                     </button>
-                    <DropdownMenu chartData={chartData} resultWikipedia={resultWikipedia} userContribs={userContribs}/>
+                    <DropdownMenu chartData={chartData} resultWikipedia={resultWikipedia} userContribs={userContribs} />
                   </h4>
                   <div className="results results1">
                     <div></div>
