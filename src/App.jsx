@@ -181,13 +181,23 @@ function App() {
         className="container"
         style={{ backgroundImage: `url(${featuredImage})` }}
       >
-        <h1 className="main-title">Wiki Leaderboard</h1>{" "}
-        <select className="language" value={language} onChange={handleLanguageChange}>
-          <option value="en">en</option>
-          <option value="fr">fr</option>
-          <option value="ln">ln</option>
-          <option value="sw">sw</option>
-        </select>
+        <div className="titles">
+          <h1 className="main-title">Wiki Leaderboard</h1>
+          <h3 className="second-title">Project</h3>
+        </div>
+        <div className="choice-lang">
+          <select
+            className="language"
+            value={language}
+            onChange={handleLanguageChange}
+          >
+            <option value="en">en</option>
+            <option value="fr">fr</option>
+            <option value="ln">ln</option>
+            <option value="sw">sw</option>
+          </select>
+          <span className="wiki">wikipedia.org</span>
+        </div>
         <div className="form-container">
           <form id="userForm" onSubmit={handleSubmit}>
             <div className="form-main-div">
@@ -257,6 +267,7 @@ function App() {
                     <button className="share-button" onClick={handleShareLink}>
                       Cliquez pour copier le lien (Share)
                     </button>
+                    <button className="share-button">Download</button>
                   </h4>
                   <div className="results results1">
                     <div></div>
