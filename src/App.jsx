@@ -1,30 +1,25 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
-import { Line } from "react-chartjs-2";
-import "chart.js/auto";
-import "./App.css";
-import { Footer } from "./footer";
+import React, { useEffect, useState, useRef } from 'react';
+import { Line } from 'react-chartjs-2';
+import 'chart.js/auto';
+import './App.css';
+import { Footer } from './footer';
+import DropdownMenu from './Dropmenu';
 
 
 function App() {
-  const [theUrl, setTheUrl] = useState(
-    window.location.origin + window.location.pathname
-  );
-
-  const [usernames, setUsernames] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [theUrl, setTheUrl] = useState(window.location.origin + window.location.pathname);
+  const [usernames, setUsernames] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(false);
   const [resultWikipedia, setResultWikipedia] = useState([]);
   const [resultCount, setResultCount] = useState(-1);
-  const [inputValue, setInputValue] = useState("");
-  const [featuredImage, setFeaturedImage] = useState("");
-  const [language, setLanguage] = useState("fr"); // Ajout d'un état pour la langue sélectionnée
+  const [inputValue, setInputValue] = useState('');
+  const [featuredImage, setFeaturedImage] = useState('');
+  const [language, setLanguage] = useState('fr');
   const inputRef = useRef();
   const [userContribs, setUserContribs] = useState([]);
-  const [chartData, setChartData] = useState({
-    labels: [],
-    datasets: [],
-  });
+  const [chartData, setChartData] = useState({ labels: [], datasets: [] });
   const [newUrl, setNewUrl] = useState();
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -32,7 +27,7 @@ function App() {
     const fetchFeaturedImages = async () => {
       try {
         const response = await fetch(
-          "https://commons.wikimedia.org/w/api.php?action=query&generator=categorymembers&gcmtitle=Category:Featured_pictures_on_Wikimedia_Commons&gcmtype=file&gcmlimit=10&prop=imageinfo&iiprop=url|thumbnail&iiurlwidth=1366&format=json&origin=*"
+          'https://commons.wikimedia.org/w/api.php?action=query&generator=categorymembers&gcmtitle=Category:Featured_pictures_on_Wikimedia_Commons&gcmtype=file&gcmlimit=10&prop=imageinfo&iiprop=url|thumbnail&iiurlwidth=1366&format=json&origin=*'
         );
         const data = await response.json();
         const pages = data.query.pages;
@@ -42,7 +37,7 @@ function App() {
         const randomImage = images[Math.floor(Math.random() * images.length)];
         setFeaturedImage(randomImage);
       } catch (error) {
-        console.error("Error fetching the featured images:", error);
+        console.error('Error fetching the featured images:', error);
       }
     };
     fetchFeaturedImages();
@@ -51,13 +46,11 @@ function App() {
   async function makeTheSearch(usernames, startDate, endDate) {
     setLoading(true);
 
-    let usernameArray = "";
+    let usernameArray = '';
     if (inputRef?.current?.value) {
-      usernameArray = inputRef.current.value
-        .split(",")
-        .map((name) => name.trim());
+      usernameArray = inputRef.current.value.split(',').map((name) => name.trim());
     } else {
-      usernameArray = usernames.split(",").map((name) => name.trim());
+      usernameArray = usernames.split(',').map((name) => name.trim());
     }
 
     const contributionsByUser = await Promise.all(
@@ -98,7 +91,7 @@ function App() {
     const allDates = Array.from(
       new Set(
         contributionsByUser.flatMap((user) =>
-          user.contributions.map((contrib) => contrib.timestamp.split("T")[0])
+          user.contributions.map((contrib) => contrib.timestamp.split('T')[0])
         )
       )
     ).sort();
@@ -123,8 +116,8 @@ function App() {
       datasets: datasets,
     });
     let params = `${usernames}_${startDate}_${endDate}`;
-    params = params.replaceAll(",", "**");
-    params = params.replaceAll(" ", "");
+    params = params.replaceAll(',', '**');
+    params = params.replaceAll(' ', '');
 
     setNewUrl(theUrl + params);
   }
@@ -138,7 +131,6 @@ function App() {
     setLanguage(e.target.value);
   };
 
-  // Function to generate a random color
   const getRandomColor = (alpha = 1) => {
     const r = Math.floor(Math.random() * 255);
     const g = Math.floor(Math.random() * 255);
@@ -146,9 +138,8 @@ function App() {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
-  // Function to copy the link
   async function handleShareLink() {
-    if (theUrl.includes("/") && theUrl[theUrl.length - 1] != "/") {
+    if (theUrl.includes('/') && theUrl[theUrl.length - 1] !== '/') {
       await navigator.clipboard.writeText(theUrl);
     } else {
       await navigator.clipboard.writeText(newUrl);
@@ -156,24 +147,22 @@ function App() {
   }
 
   useEffect(() => {
-    if (theUrl.includes("/") && theUrl[theUrl.length - 1] != "/") {
+    if (theUrl.includes('/') && theUrl[theUrl.length - 1] !== '/') {
       setCopiedLink(true);
 
-      let params = theUrl.split("/")[3].split("_");
-      let users = params[0].replaceAll("**", ",");
-      setInputValue(users);
+      let params = theUrl.split('/')[3].split('_');
+      let users = params[0].replaceAll('**', ',');
+      users = users.replaceAll(' ', '');
       setUsernames(users);
       setStartDate(params[1]);
       setEndDate(params[2]);
-
       makeTheSearch(users, params[1], params[2]);
     }
-  }, []);
+  }, [theUrl]);
 
-  function dateFormat(data) {
-    data = data.split("-");
-    data = data[1] + "/" + data[2] + "/" + data[0];
-    return data;
+  function dateFormat(dateStr) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateStr).toLocaleDateString(undefined, options);
   }
 
   return (
@@ -182,13 +171,23 @@ function App() {
         className="container"
         style={{ backgroundImage: `url(${featuredImage})` }}
       >
-        <h1 className="main-title">Wiki Leaderboard</h1>{" "}
-        <select className="language" value={language} onChange={handleLanguageChange}>
-          <option value="en">en</option>
-          <option value="fr">fr</option>
-          <option value="ln">ln</option>
-          <option value="sw">sw</option>
-        </select>
+        <div className="titles">
+          <h1 className="main-title">Wiki Leaderboard</h1>
+          <h3 className="second-title">Project</h3>
+        </div>
+        <div className="choice-lang">
+          <select
+            className="language"
+            value={language}
+            onChange={handleLanguageChange}
+          >
+            <option value="en">en</option>
+            <option value="fr">fr</option>
+            <option value="ln">ln</option>
+            <option value="sw">sw</option>
+          </select>
+          <span className="wiki">wikipedia.org</span>
+        </div>
         <div className="form-container">
           <form id="userForm" onSubmit={handleSubmit}>
             <div className="form-main-div">
@@ -235,8 +234,8 @@ function App() {
               </div>
             </div>
 
-            {inputValue.includes(",") &&
-            inputValue[inputValue.length - 1] !== "," ? (
+            {inputValue.includes(',') &&
+            inputValue[inputValue.length - 1] !== ',' ? (
               <button type="submit">Comparer</button>
             ) : (
               <button type="submit">Vérifier les contributions</button>
@@ -248,16 +247,17 @@ function App() {
             {loading && <div id="loader" className="loader"></div>}
             <div id="resultWikipedia">
               {resultCount < 0 ? (
-                "Les résultats seront affichés ici"
+                'Les résultats seront affichés ici'
               ) : resultWikipedia.length === 0 ? (
-                "Aucun résultat pour cet utilisateur"
+                'Aucun résultat pour cet utilisateur'
               ) : (
                 <>
                   <h4 className="resultTitle">
-                    Resultats du {dateFormat(startDate)} - {dateFormat(endDate)}{" "}
+                    Resultats du {dateFormat(startDate)} - {dateFormat(endDate)}{' '}
                     <button className="share-button" onClick={handleShareLink}>
                       Cliquez pour copier le lien (Share)
                     </button>
+                    <DropdownMenu chartData={chartData} resultWikipedia={resultWikipedia} userContribs={userContribs}/>
                   </h4>
                   <div className="results results1">
                     <div></div>
@@ -266,7 +266,7 @@ function App() {
                       <span>Contributions</span>
                     </div>
                     <div>
-                      <h5>{usernames.split(",").length}</h5>
+                      <h5>{usernames.split(',').length}</h5>
                       <span>Participants</span>
                     </div>
                   </div>

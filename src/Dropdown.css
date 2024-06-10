@@ -1,0 +1,17 @@
+.contain {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .select {
+    padding: 10px 20px;
+    color: #ccc;
+    font-size: 9px;
+     margin: 0 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #05614a !important;
+    cursor: pointer;
+    outline: none;
+  }
