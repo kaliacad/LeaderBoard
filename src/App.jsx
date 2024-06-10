@@ -4,6 +4,8 @@ import 'chart.js/auto';
 import './App.css';
 import { Footer } from './footer';
 import DropdownMenu from './Dropmenu';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCertificate } from '@fortawesome/free-solid-svg-icons'
 
 
 function App() {
@@ -284,7 +286,7 @@ function App() {
                         <span>{userContribs[index].count} contributions</span>
                       </div>
                       <div>
-                        {index < 3 && <span className="badge">Gagnant</span>}
+                        {index < 3 && <FontAwesomeIcon icon={faCertificate} className='badge-icon' />}
                       </div>
                     </div>
                   ))}
