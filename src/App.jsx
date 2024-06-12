@@ -1,23 +1,24 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Line } from 'react-chartjs-2';
-import 'chart.js/auto';
-import './App.css';
-import { Footer } from './footer';
-import DropdownMenu from './Dropmenu';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCertificate } from '@fortawesome/free-solid-svg-icons'
-
+import React, { useEffect, useState, useRef } from "react";
+import { Line } from "react-chartjs-2";
+import "chart.js/auto";
+import "./App.css";
+import { Footer } from "./footer";
+import DropdownMenu from "./Dropmenu";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCertificate } from "@fortawesome/free-solid-svg-icons";
 
 function App() {
-  const [theUrl, setTheUrl] = useState(window.location.origin + window.location.pathname);
-  const [usernames, setUsernames] = useState('');
+  const [theUrl, setTheUrl] = useState(
+    window.location.origin + window.location.pathname
+  );
+  const [usernames, setUsernames] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [resultWikipedia, setResultWikipedia] = useState([]);
   const [resultCount, setResultCount] = useState(-1);
-  const [inputValue, setInputValue] = useState('');
-  const [featuredImage, setFeaturedImage] = useState('');
-  const [language, setLanguage] = useState('fr');
+  const [inputValue, setInputValue] = useState("");
+  const [featuredImage, setFeaturedImage] = useState("");
+  const [language, setLanguage] = useState("fr");
   const inputRef = useRef();
   const [userContribs, setUserContribs] = useState([]);
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
@@ -28,14 +29,16 @@ function App() {
   yesterday.setDate(yesterday.getDate() - 30);
   const today = new Date();
   today.setDate(today.getDate());
-  const [startDate, setStartDate] = useState(yesterday.toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState(today.toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState(
+    yesterday.toISOString().split("T")[0]
+  );
+  const [endDate, setEndDate] = useState(today.toISOString().split("T")[0]);
 
   useEffect(() => {
     const fetchFeaturedImages = async () => {
       try {
         const response = await fetch(
-          'https://commons.wikimedia.org/w/api.php?action=query&generator=categorymembers&gcmtitle=Category:Featured_pictures_on_Wikimedia_Commons&gcmtype=file&gcmlimit=10&prop=imageinfo&iiprop=url|thumbnail&iiurlwidth=1366&format=json&origin=*'
+          "https://commons.wikimedia.org/w/api.php?action=query&generator=categorymembers&gcmtitle=Category:Featured_pictures_on_Wikimedia_Commons&gcmtype=file&gcmlimit=10&prop=imageinfo&iiprop=url|thumbnail&iiurlwidth=1366&format=json&origin=*"
         );
         const data = await response.json();
         const pages = data.query.pages;
@@ -45,7 +48,7 @@ function App() {
         const randomImage = images[Math.floor(Math.random() * images.length)];
         setFeaturedImage(randomImage);
       } catch (error) {
-        console.error('Error fetching the featured images:', error);
+        console.error("Error fetching the featured images:", error);
       }
     };
     fetchFeaturedImages();
@@ -54,11 +57,13 @@ function App() {
   async function makeTheSearch(usernames, startDate, endDate) {
     setLoading(true);
 
-    let usernameArray = '';
+    let usernameArray = "";
     if (inputRef?.current?.value) {
-      usernameArray = inputRef.current.value.split(',').map((name) => name.trim());
+      usernameArray = inputRef.current.value
+        .split(",")
+        .map((name) => name.trim());
     } else {
-      usernameArray = usernames.split(',').map((name) => name.trim());
+      usernameArray = usernames.split(",").map((name) => name.trim());
     }
 
     const contributionsByUser = await Promise.all(
@@ -99,7 +104,7 @@ function App() {
     const allDates = Array.from(
       new Set(
         contributionsByUser.flatMap((user) =>
-          user.contributions.map((contrib) => contrib.timestamp.split('T')[0])
+          user.contributions.map((contrib) => contrib.timestamp.split("T")[0])
         )
       )
     ).sort();
@@ -124,8 +129,8 @@ function App() {
       datasets: datasets,
     });
     let params = `${usernames}_${startDate}_${endDate}`;
-    params = params.replaceAll(',', '**');
-    params = params.replaceAll(' ', '');
+    params = params.replaceAll(",", "**");
+    params = params.replaceAll(" ", "");
 
     setNewUrl(theUrl + params);
   }
@@ -147,7 +152,9 @@ function App() {
   };
 
   async function handleShareLink() {
-    if (theUrl.includes('/') && theUrl[theUrl.length - 1] !== '/') {
+    alert("you have copied the link");
+    s;
+    if (theUrl.includes("/") && theUrl[theUrl.length - 1] !== "/") {
       await navigator.clipboard.writeText(theUrl);
     } else {
       await navigator.clipboard.writeText(newUrl);
@@ -155,12 +162,12 @@ function App() {
   }
 
   useEffect(() => {
-    if (theUrl.includes('/') && theUrl[theUrl.length - 1] !== '/') {
+    if (theUrl.includes("/") && theUrl[theUrl.length - 1] !== "/") {
       setCopiedLink(true);
 
-      let params = theUrl.split('/')[3].split('_');
-      let users = params[0].replaceAll('**', ',');
-      users = users.replaceAll(' ', '');
+      let params = theUrl.split("/")[3].split("_");
+      let users = params[0].replaceAll("**", ",");
+      users = users.replaceAll(" ", "");
       setUsernames(users);
       setStartDate(params[1]);
       setEndDate(params[2]);
@@ -169,7 +176,7 @@ function App() {
   }, [theUrl]);
 
   function dateFormat(dateStr) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateStr).toLocaleDateString(undefined, options);
   }
 
@@ -242,8 +249,8 @@ function App() {
               </div>
             </div>
 
-            {inputValue.includes(',') &&
-              inputValue[inputValue.length - 1] !== ',' ? (
+            {inputValue.includes(",") &&
+            inputValue[inputValue.length - 1] !== "," ? (
               <button type="submit">Comparer</button>
             ) : (
               <button type="submit">Vérifier les contributions</button>
@@ -255,17 +262,21 @@ function App() {
             {loading && <div id="loader" className="loader"></div>}
             <div id="resultWikipedia">
               {resultCount < 0 ? (
-                'Les résultats seront affichés ici'
+                "Les résultats seront affichés ici"
               ) : resultWikipedia.length === 0 ? (
-                'Aucun résultat pour cet utilisateur'
+                "Aucun résultat pour cet utilisateur"
               ) : (
                 <>
                   <h4 className="resultTitle">
-                    Resultats du {dateFormat(startDate)} - {dateFormat(endDate)}{' '}
+                    Resultats du {dateFormat(startDate)} - {dateFormat(endDate)}{" "}
                     <button className="share-button" onClick={handleShareLink}>
                       Cliquez pour copier le lien (Share)
                     </button>
-                    <DropdownMenu chartData={chartData} resultWikipedia={resultWikipedia} userContribs={userContribs} />
+                    <DropdownMenu
+                      chartData={chartData}
+                      resultWikipedia={resultWikipedia}
+                      userContribs={userContribs}
+                    />
                   </h4>
                   <div className="results results1">
                     <div></div>
@@ -274,7 +285,7 @@ function App() {
                       <span>Contributions</span>
                     </div>
                     <div>
-                      <h5>{usernames.split(',').length}</h5>
+                      <h5>{usernames.split(",").length}</h5>
                       <span>Participants</span>
                     </div>
                   </div>
@@ -286,7 +297,12 @@ function App() {
                         <span>{userContribs[index].count} contributions</span>
                       </div>
                       <div>
-                        {index < 3 && <FontAwesomeIcon icon={faCertificate} className='badge-icon' />}
+                        {index < 3 && (
+                          <FontAwesomeIcon
+                            icon={faCertificate}
+                            className="badge-icon"
+                          />
+                        )}
                       </div>
                     </div>
                   ))}
