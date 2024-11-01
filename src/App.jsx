@@ -56,12 +56,18 @@ function App() {
 
   async function makeTheSearch(usernames, startDate, endDate) {
     setLoading(true);
-
+    function removeTrailingNonAlphanumeric(str) {
+      return str.replace(/[^a-zA-Z0-9]+$/, "");
+    }
     let usernameArray = "";
     if (inputRef?.current?.value) {
-      usernameArray = inputRef.current.value
+      const removelast = removeTrailingNonAlphanumeric(inputRef.current.value);
+      console.log("removelast", removelast);
+
+      usernameArray = removelast
         .split(",")
-        .map((name) => name.trim());
+        .map((name) => name.trim())
+        .filter((name) => name.length > 0);
     } else {
       usernameArray = usernames.split(",").map((name) => name.trim());
     }
@@ -152,13 +158,12 @@ function App() {
   };
 
   async function handleShareLink() {
-    alert("you have copied the link");
-    s;
     if (theUrl.includes("/") && theUrl[theUrl.length - 1] !== "/") {
       await navigator.clipboard.writeText(theUrl);
     } else {
       await navigator.clipboard.writeText(newUrl);
     }
+    alert("you have copied the link successfully");
   }
 
   useEffect(() => {
