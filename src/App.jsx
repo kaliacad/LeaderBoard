@@ -6,14 +6,6 @@ import { Footer } from "./footer";
 import DropdownMenu from "./Dropmenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCertificate } from "@fortawesome/free-solid-svg-icons";
-import React, { useEffect, useState, useRef } from "react";
-import { Line } from "react-chartjs-2";
-import "chart.js/auto";
-import "./App.css";
-import { Footer } from "./footer";
-import DropdownMenu from "./Dropmenu";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCertificate } from "@fortawesome/free-solid-svg-icons";
 
 function App() {
   const [theUrl, setTheUrl] = useState(
