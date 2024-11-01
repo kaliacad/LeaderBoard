@@ -290,7 +290,7 @@ function App() {
                       <span>Contributions</span>
                     </div>
                     <div>
-                      <h5>{usernames.split(",").length}</h5>
+                      <h5>{userContribs.length}</h5>
                       <span>Participants</span>
                     </div>
                   </div>
