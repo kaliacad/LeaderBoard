@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import "./App.css";
-import { Footer } from "./footer";
+import { Footer } from "./components/footer";
 import DropdownMenu from "./Dropmenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCertificate } from "@fortawesome/free-solid-svg-icons";
@@ -23,6 +23,8 @@ function App() {
   const [userContribs, setUserContribs] = useState([]);
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
   const [newUrl, setNewUrl] = useState();
+  const [platform, setPlatform] = useState("wikipedia");
+  const [platformAfter, setPlatformAfter] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
 
   const yesterday = new Date();
@@ -54,7 +56,7 @@ function App() {
     fetchFeaturedImages();
   }, []);
 
-  async function makeTheSearch(usernames, startDate, endDate) {
+  async function makeTheSearch(usernames, startDate, endDate, platform) {
     setLoading(true);
     function removeTrailingNonAlphanumeric(str) {
       return str.replace(/[^a-zA-Z0-9]+$/, "");
@@ -62,7 +64,6 @@ function App() {
     let usernameArray = "";
     if (inputRef?.current?.value) {
       const removelast = removeTrailingNonAlphanumeric(inputRef.current.value);
-      console.log("removelast", removelast);
 
       usernameArray = removelast
         .split(",")
@@ -72,12 +73,22 @@ function App() {
       usernameArray = usernames.split(",").map((name) => name.trim());
     }
 
+    console.log("platform", platform);
+
     const contributionsByUser = await Promise.all(
       usernameArray.map(async (username) => {
-        const response = await fetch(
-          `https://${language}.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
-        );
+        let response = "";
+        if (platform === "wikipedia") {
+          response = await fetch(
+            `https://${language}.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
+          );
+        } else if (platform === "wikidata") {
+          response = await fetch(
+            `https://www.wikidata.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
+          );
+        }
 
+        setPlatformAfter(platform);
         const data = await response.json();
 
         const contributions = data.query.usercontribs.filter((contribution) => {
@@ -134,7 +145,7 @@ function App() {
       labels: allDates,
       datasets: datasets,
     });
-    let params = `${usernames}_${startDate}_${endDate}`;
+    let params = `${usernames}_${startDate}_${endDate}_${platform}`;
     params = params.replaceAll(",", "**");
     params = params.replaceAll(" ", "");
 
@@ -143,11 +154,15 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    makeTheSearch(usernames, startDate, endDate);
+    makeTheSearch(usernames, startDate, endDate, platform);
   };
 
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value);
+  };
+
+  const handlePlatformChange = (e) => {
+    setPlatform(e.target.value);
   };
 
   const getRandomColor = (alpha = 1) => {
@@ -176,7 +191,8 @@ function App() {
       setUsernames(users);
       setStartDate(params[1]);
       setEndDate(params[2]);
-      makeTheSearch(users, params[1], params[2]);
+      setPlatform(params[3]);
+      makeTheSearch(users, params[1], params[2], params[3]);
     }
   }, [theUrl]);
 
@@ -206,7 +222,14 @@ function App() {
             <option value="ln">ln</option>
             <option value="sw">sw</option>
           </select>
-          <span className="wiki">wikipedia.org</span>
+          <select
+            className="wiki"
+            value={language}
+            onChange={handlePlatformChange}
+          >
+            <option value="wikipedia">wikipedia.org</option>
+            <option value="wikidata">wikidata.org</option>
+          </select>
         </div>
         <div className="form-container">
           <form id="userForm" onSubmit={handleSubmit}>
@@ -273,7 +296,8 @@ function App() {
               ) : (
                 <>
                   <h4 className="resultTitle">
-                    Resultats du {dateFormat(startDate)} - {dateFormat(endDate)}{" "}
+                    Resultats {platformAfter} du {dateFormat(startDate)} -{" "}
+                    {dateFormat(endDate)}{" "}
                     <button className="share-button" onClick={handleShareLink}>
                       Cliquez pour copier le lien (Share)
                     </button>
