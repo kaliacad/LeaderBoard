@@ -86,6 +86,10 @@ function App() {
           response = await fetch(
             `https://www.wikidata.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
           );
+        } else if (platform === "wikicommon") {
+          response = await fetch(
+            `https://commons.wikimedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
+          );
         }
 
         setPlatformAfter(platform);
@@ -229,6 +233,7 @@ function App() {
           >
             <option value="wikipedia">wikipedia.org</option>
             <option value="wikidata">wikidata.org</option>
+            <option value="wikicommon">commons.wikimedia.org</option>
           </select>
         </div>
         <div className="form-container">
