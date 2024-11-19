@@ -228,7 +228,7 @@ function App() {
           </select>
           <select
             className="wiki"
-            value={language}
+            value={platform}
             onChange={handlePlatformChange}
           >
             <option value="wikipedia">wikipedia.org</option>
