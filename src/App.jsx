@@ -35,6 +35,12 @@ function App() {
     yesterday.toISOString().split("T")[0]
   );
   const [endDate, setEndDate] = useState(today.toISOString().split("T")[0]);
+  const [startDateAfter, setStartDateAfter] = useState(
+    yesterday.toISOString().split("T")[0]
+  );
+  const [endDateAfter, setEndDateAfter] = useState(
+    today.toISOString().split("T")[0]
+  );
 
   useEffect(() => {
     const fetchFeaturedImages = async () => {
@@ -72,8 +78,6 @@ function App() {
     } else {
       usernameArray = usernames.split(",").map((name) => name.trim());
     }
-
-    console.log("platform", platform);
 
     const contributionsByUser = await Promise.all(
       usernameArray.map(async (username) => {
@@ -120,6 +124,8 @@ function App() {
     setResultWikipedia(sortedUsers);
     setResultCount(sortedUsers.reduce((sum, user) => sum + user.count, 0));
     setLoading(false);
+    setStartDateAfter(startDate);
+    setEndDateAfter(endDate);
 
     // Prepare chart data
     const allDates = Array.from(
@@ -301,8 +307,8 @@ function App() {
               ) : (
                 <>
                   <h4 className="resultTitle">
-                    Resultats {platformAfter} du {dateFormat(startDate)} -{" "}
-                    {dateFormat(endDate)}{" "}
+                    Resultats {platformAfter} du {dateFormat(startDateAfter)} -{" "}
+                    {dateFormat(endDateAfter)}{" "}
                     <button className="share-button" onClick={handleShareLink}>
                       Cliquez pour copier le lien (Share)
                     </button>
@@ -347,7 +353,43 @@ function App() {
 
           <div className="chart-container">
             {chartData && chartData.datasets.length > 0 ? (
-              <Line data={chartData} />
+              <Line
+                data={chartData}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      position: "right", // Move the legend to the right
+                      labels: {
+                        usePointStyle: true, // Use circular points instead of rectangles
+                        pointStyle: "circle", // Ensure the points are displayed as circles
+                      },
+                    },
+                    tooltip: {
+                      callbacks: {
+                        label: (tooltipItem) => {
+                          return `${tooltipItem.dataset.label}: ${tooltipItem.raw} contributions`;
+                        },
+                      },
+                    },
+                  },
+                  scales: {
+                    x: {
+                      title: {
+                        display: true,
+                        text: "Dates", // X-axis label
+                      },
+                    },
+                    y: {
+                      title: {
+                        display: true,
+                        text: "Number of Contributions", // Y-axis label
+                      },
+                      beginAtZero: true, // Start Y-axis at 0
+                    },
+                  },
+                }}
+              />
             ) : (
               <div>Aucune donnée à afficher</div>
             )}
