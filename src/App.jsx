@@ -1,14 +1,17 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import "./App.css";
-import { Footer } from "./footer";
+import { Footer } from "./components/footer";
 import DropdownMenu from "./Dropmenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCertificate } from "@fortawesome/free-solid-svg-icons";
 
+
+
+
 function App() {
-  const [theUrl, setTheUrl] = useState(
+  const theUrl = useState(
     window.location.origin + window.location.pathname
   );
   const [usernames, setUsernames] = useState("");
@@ -16,14 +19,16 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [resultWikipedia, setResultWikipedia] = useState([]);
   const [resultCount, setResultCount] = useState(-1);
-  const [inputValue, setInputValue] = useState("");
+  const inputValue = useState("");
   const [featuredImage, setFeaturedImage] = useState("");
   const [language, setLanguage] = useState("fr");
   const inputRef = useRef();
   const [userContribs, setUserContribs] = useState([]);
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
   const [newUrl, setNewUrl] = useState();
-  const [copiedLink, setCopiedLink] = useState(false);
+  const [platform, setPlatform] = useState("wikipedia");
+  const [platformAfter, setPlatformAfter] = useState("");
+  const setCopiedLink = useState(false);
 
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 30);
@@ -33,6 +38,12 @@ function App() {
     yesterday.toISOString().split("T")[0]
   );
   const [endDate, setEndDate] = useState(today.toISOString().split("T")[0]);
+  const [startDateAfter, setStartDateAfter] = useState(
+    yesterday.toISOString().split("T")[0]
+  );
+  const [endDateAfter, setEndDateAfter] = useState(
+    today.toISOString().split("T")[0]
+  );
 
   useEffect(() => {
     const fetchFeaturedImages = async () => {
@@ -52,26 +63,43 @@ function App() {
       }
     };
     fetchFeaturedImages();
-  }, []);
+  }, [setCopiedLink]);
 
-  async function makeTheSearch(usernames, startDate, endDate) {
+  async function makeTheSearch(usernames, startDate, endDate, platform) {
     setLoading(true);
-
+    function removeTrailingNonAlphanumeric(str) {
+      return str.replace(/[^a-zA-Z0-9]+$/, "");
+    }
     let usernameArray = "";
     if (inputRef?.current?.value) {
-      usernameArray = inputRef.current.value
+      const removelast = removeTrailingNonAlphanumeric(inputRef.current.value);
+
+      usernameArray = removelast
         .split(",")
-        .map((name) => name.trim());
+        .map((name) => name.trim())
+        .filter((name) => name.length > 0);
     } else {
       usernameArray = usernames.split(",").map((name) => name.trim());
     }
 
     const contributionsByUser = await Promise.all(
       usernameArray.map(async (username) => {
-        const response = await fetch(
-          `https://${language}.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
-        );
+        let response = "";
+        if (platform === "wikipedia") {
+          response = await fetch(
+            `https://${language}.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
+          );
+        } else if (platform === "wikidata") {
+          response = await fetch(
+            `https://www.wikidata.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
+          );
+        } else if (platform === "wikicommon") {
+          response = await fetch(
+            `https://commons.wikimedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
+          );
+        }
 
+        setPlatformAfter(platform);
         const data = await response.json();
 
         const contributions = data.query.usercontribs.filter((contribution) => {
@@ -99,6 +127,8 @@ function App() {
     setResultWikipedia(sortedUsers);
     setResultCount(sortedUsers.reduce((sum, user) => sum + user.count, 0));
     setLoading(false);
+    setStartDateAfter(startDate);
+    setEndDateAfter(endDate);
 
     // Prepare chart data
     const allDates = Array.from(
@@ -128,7 +158,7 @@ function App() {
       labels: allDates,
       datasets: datasets,
     });
-    let params = `${usernames}_${startDate}_${endDate}`;
+    let params = `${usernames}_${startDate}_${endDate}_${platform}`;
     params = params.replaceAll(",", "**");
     params = params.replaceAll(" ", "");
 
@@ -137,11 +167,15 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    makeTheSearch(usernames, startDate, endDate);
+    makeTheSearch(usernames, startDate, endDate, platform);
   };
 
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value);
+  };
+
+  const handlePlatformChange = (e) => {
+    setPlatform(e.target.value);
   };
 
   const getRandomColor = (alpha = 1) => {
@@ -170,9 +204,10 @@ function App() {
       setUsernames(users);
       setStartDate(params[1]);
       setEndDate(params[2]);
-      makeTheSearch(users, params[1], params[2]);
+      setPlatform(params[3]);
+      makeTheSearch(users, params[1], params[2], params[3]);
     }
-  }, [theUrl]);
+  }, [theUrl, makeTheSearch, setCopiedLink]);
 
   function dateFormat(dateStr) {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -200,7 +235,15 @@ function App() {
             <option value="ln">ln</option>
             <option value="sw">sw</option>
           </select>
-          <span className="wiki">wikipedia.org</span>
+          <select
+            className="wiki"
+            value={platform}
+            onChange={handlePlatformChange}
+          >
+            <option value="wikipedia">wikipedia.org</option>
+            <option value="wikidata">wikidata.org</option>
+            <option value="wikicommon">commons.wikimedia.org</option>
+          </select>
         </div>
         <div className="form-container">
           <form id="userForm" onSubmit={handleSubmit}>
@@ -213,7 +256,7 @@ function App() {
                   type="text"
                   id="usernames"
                   name="usernames"
-                  placeholder="users1, users2, users3"
+                  placeholder="users1, users2, users3,..."
                   value={usernames}
                   onChange={(e) => setUsernames(e.target.value)}
                   ref={inputRef}
@@ -267,7 +310,8 @@ function App() {
               ) : (
                 <>
                   <h4 className="resultTitle">
-                    Resultats du {dateFormat(startDate)} - {dateFormat(endDate)}{" "}
+                    Resultats {platformAfter} du {dateFormat(startDateAfter)} -{" "}
+                    {dateFormat(endDateAfter)}{" "}
                     <button className="share-button" onClick={handleShareLink}>
                       Cliquez pour copier le lien (Share)
                     </button>
@@ -284,7 +328,7 @@ function App() {
                       <span>Contributions</span>
                     </div>
                     <div>
-                      <h5>{usernames.split(",").length}</h5>
+                      <h5>{userContribs.length}</h5>
                       <span>Participants</span>
                     </div>
                   </div>
@@ -312,7 +356,43 @@ function App() {
 
           <div className="chart-container">
             {chartData && chartData.datasets.length > 0 ? (
-              <Line data={chartData} />
+              <Line
+                data={chartData}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      position: "right", // Move the legend to the right
+                      labels: {
+                        usePointStyle: true, // Use circular points instead of rectangles
+                        pointStyle: "circle", // Ensure the points are displayed as circles
+                      },
+                    },
+                    tooltip: {
+                      callbacks: {
+                        label: (tooltipItem) => {
+                          return `${tooltipItem.dataset.label}: ${tooltipItem.raw} contributions`;
+                        },
+                      },
+                    },
+                  },
+                  scales: {
+                    x: {
+                      title: {
+                        display: true,
+                        text: "Dates", // X-axis label
+                      },
+                    },
+                    y: {
+                      title: {
+                        display: true,
+                        text: "Number of Contributions", // Y-axis label
+                      },
+                      beginAtZero: true, // Start Y-axis at 0
+                    },
+                  },
+                }}
+              />
             ) : (
               <div>Aucune donnée à afficher</div>
             )}
