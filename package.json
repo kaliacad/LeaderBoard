@@ -9,7 +9,8 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "clean": "depcheck && npm prune",
-    "deploy": "netlify deploy"
+    "deploy": "netlify deploy",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.2",
@@ -26,13 +27,19 @@
     "save-html-as-image": "^1.7.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.5",
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
-    "vite": "^5.2.0"
+    "husky": "^8.0.0",
+    "prettier": "^3.5.3",
+    "vite": "^6.2.3"
   }
 }
