@@ -6,6 +6,7 @@ import { Footer } from "./components/footer";
 import DropdownMenu from "./Dropmenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCertificate } from "@fortawesome/free-solid-svg-icons";
+import UserContributionModal from "./components/UserContributions";
 
 function App() {
   const [theUrl, setTheUrl] = useState(
@@ -27,6 +28,9 @@ function App() {
   const [platformAfter, setPlatformAfter] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState("");
+
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 30);
   const today = new Date();
@@ -41,6 +45,13 @@ function App() {
   const [endDateAfter, setEndDateAfter] = useState(
     today.toISOString().split("T")[0]
   );
+
+
+  const handleUserClick = (username) => {
+    setSelectedUser(username);
+    setModalOpen(true);
+  };
+
 
   useEffect(() => {
     const fetchFeaturedImages = async () => {
@@ -333,7 +344,12 @@ function App() {
                     <div key={index} className="results results2">
                       <div>{index + 1}</div>
                       <div className="user-contribs">
-                        <strong>{user.username}</strong>
+                        <strong 
+                          className="clickable-username" 
+                          onClick={() => handleUserClick(user.username)}
+                        >
+                          {user.username}
+                        </strong>
                         <span>{userContribs[index].count} contributions</span>
                       </div>
                       <div>
@@ -396,6 +412,17 @@ function App() {
           </div>
         </div>
       </div>
+
+      <UserContributionModal
+        username={selectedUser}
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        language={language}
+        platform={platformAfter || platform}
+        startDate={startDateAfter || startDate}
+        endDate={endDateAfter || endDate}
+      />
+
       <Footer />
     </div>
   );
