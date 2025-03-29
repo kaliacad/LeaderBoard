@@ -74,11 +74,12 @@ body {
   display: flex;
   justify-content: center;
   margin: 10px;
+  
 }
 
 .language {
-  width: 40px;
-  height: 25px;
+  width: 10%;
+  height: 40px;
   border: none;
   background-color: #29d384;
   color: white;
@@ -88,6 +89,8 @@ body {
   background-color: #e5e4e4;
   padding: 2px 10px;
   color: black;
+  width: 40%;
+  height: 40px;
 }
 
 h2 {
@@ -99,6 +102,7 @@ h2 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+ 
 }
 
 form {
@@ -112,6 +116,7 @@ form {
 .form-main-div {
   display: flex;
   gap: 2%;
+ 
 }
 
 .form-main-div>div {
@@ -306,9 +311,44 @@ h6 {
     width: 25%;
     gap: 1px;
   }
+  .wiki {
+    background-color: #e5e4e4;
+    padding: 2px 10px;
+    color: black;
+    width: 60%;
+    height: 40px;
+  }
+  .form-main-div {
+    display: grid;
+    gap: 0%;
+   
+  }
+  .label {
+    display: grid;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: none !important;
+    color: #000;
+    font-size: 12px;
+    border-radius: 6px 0 0 6px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .lb-div{
+   
+    width: 100% !important;
+  }
+  
+  .control-input{
+    width: 100%;
+  }
+  
+  
+  
 
   .form-main-div>div:first-of-type {
-    width: 40%;
+    width: 100%;
   }
 
   button {
