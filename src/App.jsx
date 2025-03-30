@@ -215,7 +215,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="page_containe">
       <div
         className="container"
         style={{ backgroundImage: `url(${featuredImage})` }}
@@ -248,11 +248,12 @@ function App() {
         <div className="form-container">
           <form id="userForm" onSubmit={handleSubmit}>
             <div className="form-main-div">
-              <div>
+              <div >
                 <span className="label" htmlFor="startDate">
-                  Usernames
+                  <span >Usernames</span> 
                 </span>
                 <input
+                 className="control-input"
                   type="text"
                   id="usernames"
                   name="usernames"
@@ -263,11 +264,12 @@ function App() {
                   required
                 />
               </div>
-              <div>
-                <span className="label" htmlFor="startDate">
+              <div className="lb-div">
+                <span className="label" id="label-id" htmlFor="startDate">
                   Start Date
                 </span>
                 <input
+                className="control-input"
                   type="date"
                   id="startDate"
                   name="startDate"
@@ -276,11 +278,12 @@ function App() {
                   required
                 />
               </div>
-              <div>
+              <div className="lb-div" id="date-div">
                 <span className="label" htmlFor="endDate">
                   End Date
                 </span>
                 <input
+                 className="control-input"
                   type="date"
                   id="endDate"
                   name="endDate"
