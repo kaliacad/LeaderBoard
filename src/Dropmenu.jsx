@@ -1,9 +1,10 @@
-import React from 'react';
-import { saveAs } from 'file-saver';
 import { saveAsPng } from 'save-html-as-image';
 import './Dropdown.css';
+import PropTypes from 'prop-types';
 
-const DropdownMenu = ({ chartData, resultWikipedia, userContribs }) => {
+
+
+const DropdownMenu = ({ resultWikipedia, userContribs }) => {
   const exportToJSON = () => {
     const data = { resultWikipedia, userContribs };
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
@@ -60,6 +61,11 @@ const DropdownMenu = ({ chartData, resultWikipedia, userContribs }) => {
       </select>
     </div>
   );
+};
+
+DropdownMenu.propTypes = {
+  resultWikipedia: PropTypes.array.isRequired,
+  userContribs: PropTypes.array.isRequired,
 };
 
 export default DropdownMenu;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import "./App.css";
@@ -8,8 +8,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCertificate } from "@fortawesome/free-solid-svg-icons";
 import UserContributionModal from "./components/UserContributions";
 
+
+
+
 function App() {
-  const [theUrl, setTheUrl] = useState(
+  const theUrl = useState(
     window.location.origin + window.location.pathname
   );
   const [usernames, setUsernames] = useState("");
@@ -17,7 +20,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [resultWikipedia, setResultWikipedia] = useState([]);
   const [resultCount, setResultCount] = useState(-1);
-  const [inputValue, setInputValue] = useState("");
+  const inputValue = useState("");
   const [featuredImage, setFeaturedImage] = useState("");
   const [language, setLanguage] = useState("fr");
   const inputRef = useRef();
@@ -26,7 +29,7 @@ function App() {
   const [newUrl, setNewUrl] = useState();
   const [platform, setPlatform] = useState("wikipedia");
   const [platformAfter, setPlatformAfter] = useState("");
-  const [copiedLink, setCopiedLink] = useState(false);
+  const setCopiedLink = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
@@ -71,7 +74,7 @@ function App() {
       }
     };
     fetchFeaturedImages();
-  }, []);
+  }, [setCopiedLink]);
 
   async function makeTheSearch(usernames, startDate, endDate, platform) {
     setLoading(true);
@@ -215,7 +218,7 @@ function App() {
       setPlatform(params[3]);
       makeTheSearch(users, params[1], params[2], params[3]);
     }
-  }, [theUrl]);
+  }, [theUrl, makeTheSearch, setCopiedLink]);
 
   function dateFormat(dateStr) {
     const options = { year: "numeric", month: "long", day: "numeric" };
