@@ -7,13 +7,8 @@ import DropdownMenu from "./Dropmenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCertificate } from "@fortawesome/free-solid-svg-icons";
 
-
-
-
 function App() {
-  const theUrl = useState(
-    window.location.origin + window.location.pathname
-  );
+  const theUrl = useState(window.location.origin + window.location.pathname);
   const [usernames, setUsernames] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -82,34 +77,71 @@ function App() {
       usernameArray = usernames.split(",").map((name) => name.trim());
     }
 
-    const contributionsByUser = await Promise.all(
-      usernameArray.map(async (username) => {
-        let response = "";
-        if (platform === "wikipedia") {
-          response = await fetch(
-            `https://${language}.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
-          );
-        } else if (platform === "wikidata") {
-          response = await fetch(
-            `https://www.wikidata.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
-          );
-        } else if (platform === "wikicommon") {
-          response = await fetch(
-            `https://commons.wikimedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
-          );
+    // function to fetch all contributions via pagination
+    async function fetchContributions(
+      username,
+      platform,
+      language,
+      startDate,
+      endDate
+    ) {
+      let baseUrl;
+      if (platform === "wikipedia") {
+        baseUrl = `https://${language}.wikipedia.org/w/api.php`;
+      } else if (platform === "wikidata") {
+        baseUrl = `https://www.wikidata.org/w/api.php`;
+      } else if (platform === "wikicommon") {
+        baseUrl = `https://commons.wikimedia.org/w/api.php`;
+      }
+
+      let allContributions = [];
+      let uccontinue = null;
+      do {
+        const url = new URL(baseUrl);
+        url.searchParams.append("action", "query");
+        url.searchParams.append("list", "usercontribs");
+        url.searchParams.append("ucuser", username);
+        url.searchParams.append("uclimit", "500");
+        url.searchParams.append("ucprop", "title|timestamp");
+        url.searchParams.append("format", "json");
+        url.searchParams.append("origin", "*");
+        if (uccontinue) {
+          url.searchParams.append("uccontinue", uccontinue);
         }
 
-        setPlatformAfter(platform);
+        const response = await fetch(url);
         const data = await response.json();
 
-        const contributions = data.query.usercontribs.filter((contribution) => {
-          const contributionDate = new Date(contribution.timestamp);
-          return (
-            contributionDate >= new Date(startDate) &&
-            contributionDate <= new Date(endDate)
-          );
-        });
+        if (data?.query?.usercontribs) {
+          allContributions = allContributions.concat(data.query.usercontribs);
+        }
 
+        uccontinue = data?.continue?.uccontinue || null;
+      } while (uccontinue);
+
+      // Adjust the end date to include the entire day
+      const endDateObj = new Date(endDate);
+      endDateObj.setHours(23, 59, 59, 999);
+      return allContributions.filter((contribution) => {
+        const contributionDate = new Date(contribution.timestamp);
+        return (
+          contributionDate.getTime() >= new Date(startDate).getTime() &&
+          contributionDate.getTime() <= endDateObj.getTime()
+        );
+      });
+    }
+
+    const contributionsByUser = await Promise.all(
+      usernameArray.map(async (username) => {
+        // Fetch contributions based on platform
+        const contributions = await fetchContributions(
+          username,
+          platform,
+          language,
+          startDate,
+          endDate
+        );
+        setPlatformAfter(platform);
         return { username, contributions };
       })
     );
