@@ -336,3 +336,14 @@ h6 {
 .footer-link:hover {
   text-decoration: underline;
 }
+
+.clickable-username {
+  cursor: pointer;
+  color: #2563eb;
+  transition: color 0.2s;
+}
+
+.clickable-username:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
