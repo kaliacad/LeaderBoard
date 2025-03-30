@@ -2,6 +2,7 @@
 
 LeaderBoard est une application servant de comparateur 
 <img title="a title" alt="Alt text" src="./demo.png">
+check documentations <a href="https://meta.wikimedia.org/wiki/Wiki_Leaderboard">here<a/>
 
 ## Features
 
