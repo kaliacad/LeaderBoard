@@ -354,10 +354,15 @@ function App() {
                       </div>
                       <div>
                         {index < 3 && userContribs[index].count > 0 && (
-                          <FontAwesomeIcon
-                            icon={faCertificate}
-                            className="badge-icon"
-                          />
+                          <div
+                            className={`badge-container badge-${index + 1}`}
+                          >
+                            <FontAwesomeIcon
+                              icon={faCertificate}
+                              className="badge-icon"
+                            />
+                            <span className="badge-label">{index + 1}</span>
+                          </div>
                         )}
                       </div>
                     </div>
