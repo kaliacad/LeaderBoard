@@ -94,6 +94,10 @@ function App() {
           response = await fetch(
             `https://commons.wikimedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
           );
+        } else if (platform === "gerrit") {
+          response = await fetch(
+            ` https://gerrit.wikimedia.org/r/changes/?q=committer:USERNAME+-is:wip+status:merged`
+          );
         }
 
         setPlatformAfter(platform);
@@ -128,13 +132,19 @@ function App() {
     setEndDateAfter(endDate);
 
     // Prepare chart data
-    const allDates = Array.from(
-      new Set(
-        contributionsByUser.flatMap((user) =>
-          user.contributions.map((contrib) => contrib.timestamp.split("T")[0])
-        )
-      )
-    ).sort();
+const allDates = Array.from(
+  new Set(
+    contributionsByUser.flatMap((user) =>
+      user.contributions.map((contrib) => {
+        if (contrib.timestamp) {
+          return new Date(contrib.timestamp).toISOString().split("T")[0]; // Ensure consistent date format
+        }
+        return null;
+      }).filter(Boolean) // Remove null values
+    )
+  )
+).sort((a, b) => new Date(a) - new Date(b)); // Ensure proper sorting
+
     const datasets = contributionsByUser.map((user) => {
       const userContributionsByDate = allDates.map(
         (date) =>
@@ -240,6 +250,7 @@ function App() {
             <option value="wikipedia">wikipedia.org</option>
             <option value="wikidata">wikidata.org</option>
             <option value="wikicommon">commons.wikimedia.org</option>
+            <option value="gerrit">gerrit.wikimedia.org</option>
           </select>
         </div>
         <div className="form-container">
