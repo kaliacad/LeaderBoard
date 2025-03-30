@@ -47,7 +47,8 @@ const DropdownMenu = ({ chartData, resultWikipedia, userContribs }) => {
       exportToCSV();
     } else if (selectedValue === 'png') {
       exportToPNG();
-    }
+    };
+    event.target.value = ""
   };
 
   return (
