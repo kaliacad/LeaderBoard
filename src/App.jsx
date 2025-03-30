@@ -337,7 +337,7 @@ function App() {
                         <span>{userContribs[index].count} contributions</span>
                       </div>
                       <div>
-                        {index < 3 && (
+                        {index < 3 && userContribs[index].count > 0 && (
                           <FontAwesomeIcon
                             icon={faCertificate}
                             className="badge-icon"
