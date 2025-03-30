@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import "./App.css";
@@ -7,11 +7,8 @@ import DropdownMenu from "./Dropmenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCertificate } from "@fortawesome/free-solid-svg-icons";
 
-
-
-
 function App() {
-  const theUrl = useState(
+  const [theUrl, setTheUrl] = useState(
     window.location.origin + window.location.pathname
   );
   const [usernames, setUsernames] = useState("");
@@ -19,16 +16,14 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [resultWikipedia, setResultWikipedia] = useState([]);
   const [resultCount, setResultCount] = useState(-1);
-  const inputValue = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [featuredImage, setFeaturedImage] = useState("");
   const [language, setLanguage] = useState("fr");
   const inputRef = useRef();
   const [userContribs, setUserContribs] = useState([]);
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
   const [newUrl, setNewUrl] = useState();
-  const [platform, setPlatform] = useState("wikipedia");
-  const [platformAfter, setPlatformAfter] = useState("");
-  const setCopiedLink = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 30);
@@ -38,12 +33,6 @@ function App() {
     yesterday.toISOString().split("T")[0]
   );
   const [endDate, setEndDate] = useState(today.toISOString().split("T")[0]);
-  const [startDateAfter, setStartDateAfter] = useState(
-    yesterday.toISOString().split("T")[0]
-  );
-  const [endDateAfter, setEndDateAfter] = useState(
-    today.toISOString().split("T")[0]
-  );
 
   useEffect(() => {
     const fetchFeaturedImages = async () => {
@@ -63,53 +52,68 @@ function App() {
       }
     };
     fetchFeaturedImages();
-  }, [setCopiedLink]);
+  }, []);
 
-  async function makeTheSearch(usernames, startDate, endDate, platform) {
+  // Helper function to fetch all contributions via pagination
+  async function fetchAllContributions(username, language, startDate, endDate) {
+    let allContributions = [];
+    let uccontinue = null;
+    
+    do {
+      const url = new URL(`https://${language}.wikipedia.org/w/api.php`);
+      url.searchParams.append("action", "query");
+      url.searchParams.append("list", "usercontribs");
+      url.searchParams.append("ucuser", username);
+      url.searchParams.append("uclimit", "500");
+      url.searchParams.append("ucprop", "title|timestamp");
+      url.searchParams.append("format", "json");
+      url.searchParams.append("origin", "*");
+      if (uccontinue) {
+        url.searchParams.append("uccontinue", uccontinue);
+      }
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data?.query?.usercontribs) {
+        allContributions = allContributions.concat(data.query.usercontribs);
+      }
+
+      uccontinue = data?.continue?.uccontinue || null;
+    } while (uccontinue);
+
+    // Ensure end date includes contributions up to 23:59:59.999
+    return allContributions.filter((contribution) => {
+      const contributionDate = new Date(contribution.timestamp);
+      const endDateObj = new Date(endDate);
+      endDateObj.setHours(23, 59, 59, 999);
+      return (
+        contributionDate.getTime() >= new Date(startDate).getTime() &&
+        contributionDate.getTime() <= endDateObj.getTime()
+      );
+    });
+  }
+
+  async function makeTheSearch(usernames, startDate, endDate) {
     setLoading(true);
-    function removeTrailingNonAlphanumeric(str) {
-      return str.replace(/[^a-zA-Z0-9]+$/, "");
-    }
+
     let usernameArray = "";
     if (inputRef?.current?.value) {
-      const removelast = removeTrailingNonAlphanumeric(inputRef.current.value);
-
-      usernameArray = removelast
+      usernameArray = inputRef.current.value
         .split(",")
-        .map((name) => name.trim())
-        .filter((name) => name.length > 0);
+        .map((name) => name.trim());
     } else {
       usernameArray = usernames.split(",").map((name) => name.trim());
     }
 
     const contributionsByUser = await Promise.all(
       usernameArray.map(async (username) => {
-        let response = "";
-        if (platform === "wikipedia") {
-          response = await fetch(
-            `https://${language}.wikipedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
-          );
-        } else if (platform === "wikidata") {
-          response = await fetch(
-            `https://www.wikidata.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
-          );
-        } else if (platform === "wikicommon") {
-          response = await fetch(
-            `https://commons.wikimedia.org/w/api.php?action=query&list=usercontribs&ucuser=${username}&uclimit=500&ucprop=title|timestamp&format=json&origin=*`
-          );
-        }
-
-        setPlatformAfter(platform);
-        const data = await response.json();
-
-        const contributions = data.query.usercontribs.filter((contribution) => {
-          const contributionDate = new Date(contribution.timestamp);
-          return (
-            contributionDate >= new Date(startDate) &&
-            contributionDate <= new Date(endDate)
-          );
-        });
-
+        const contributions = await fetchAllContributions(
+          username,
+          language,
+          startDate,
+          endDate
+        );
         return { username, contributions };
       })
     );
@@ -127,8 +131,6 @@ function App() {
     setResultWikipedia(sortedUsers);
     setResultCount(sortedUsers.reduce((sum, user) => sum + user.count, 0));
     setLoading(false);
-    setStartDateAfter(startDate);
-    setEndDateAfter(endDate);
 
     // Prepare chart data
     const allDates = Array.from(
@@ -158,7 +160,7 @@ function App() {
       labels: allDates,
       datasets: datasets,
     });
-    let params = `${usernames}_${startDate}_${endDate}_${platform}`;
+    let params = `${usernames}_${startDate}_${endDate}`;
     params = params.replaceAll(",", "**");
     params = params.replaceAll(" ", "");
 
@@ -167,15 +169,11 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    makeTheSearch(usernames, startDate, endDate, platform);
+    makeTheSearch(usernames, startDate, endDate);
   };
 
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value);
-  };
-
-  const handlePlatformChange = (e) => {
-    setPlatform(e.target.value);
   };
 
   const getRandomColor = (alpha = 1) => {
@@ -204,10 +202,9 @@ function App() {
       setUsernames(users);
       setStartDate(params[1]);
       setEndDate(params[2]);
-      setPlatform(params[3]);
-      makeTheSearch(users, params[1], params[2], params[3]);
+      makeTheSearch(users, params[1], params[2]);
     }
-  }, [theUrl, makeTheSearch, setCopiedLink]);
+  }, [theUrl]);
 
   function dateFormat(dateStr) {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -235,15 +232,7 @@ function App() {
             <option value="ln">ln</option>
             <option value="sw">sw</option>
           </select>
-          <select
-            className="wiki"
-            value={platform}
-            onChange={handlePlatformChange}
-          >
-            <option value="wikipedia">wikipedia.org</option>
-            <option value="wikidata">wikidata.org</option>
-            <option value="wikicommon">commons.wikimedia.org</option>
-          </select>
+          <span className="wiki">wikipedia.org</span>
         </div>
         <div className="form-container">
           <form id="userForm" onSubmit={handleSubmit}>
@@ -256,7 +245,7 @@ function App() {
                   type="text"
                   id="usernames"
                   name="usernames"
-                  placeholder="users1, users2, users3,..."
+                  placeholder="users1, users2, users3"
                   value={usernames}
                   onChange={(e) => setUsernames(e.target.value)}
                   ref={inputRef}
@@ -310,8 +299,7 @@ function App() {
               ) : (
                 <>
                   <h4 className="resultTitle">
-                    Resultats {platformAfter} du {dateFormat(startDateAfter)} -{" "}
-                    {dateFormat(endDateAfter)}{" "}
+                    Resultats du {dateFormat(startDate)} - {dateFormat(endDate)}{" "}
                     <button className="share-button" onClick={handleShareLink}>
                       Cliquez pour copier le lien (Share)
                     </button>
@@ -328,7 +316,7 @@ function App() {
                       <span>Contributions</span>
                     </div>
                     <div>
-                      <h5>{userContribs.length}</h5>
+                      <h5>{usernames.split(",").length}</h5>
                       <span>Participants</span>
                     </div>
                   </div>
@@ -340,7 +328,7 @@ function App() {
                         <span>{userContribs[index].count} contributions</span>
                       </div>
                       <div>
-                        {index < 3 && userContribs[index].count > 0 && (
+                        {index < 3 && (
                           <FontAwesomeIcon
                             icon={faCertificate}
                             className="badge-icon"
@@ -356,43 +344,7 @@ function App() {
 
           <div className="chart-container">
             {chartData && chartData.datasets.length > 0 ? (
-              <Line
-                data={chartData}
-                options={{
-                  responsive: true,
-                  plugins: {
-                    legend: {
-                      position: "right", // Move the legend to the right
-                      labels: {
-                        usePointStyle: true, // Use circular points instead of rectangles
-                        pointStyle: "circle", // Ensure the points are displayed as circles
-                      },
-                    },
-                    tooltip: {
-                      callbacks: {
-                        label: (tooltipItem) => {
-                          return `${tooltipItem.dataset.label}: ${tooltipItem.raw} contributions`;
-                        },
-                      },
-                    },
-                  },
-                  scales: {
-                    x: {
-                      title: {
-                        display: true,
-                        text: "Dates", // X-axis label
-                      },
-                    },
-                    y: {
-                      title: {
-                        display: true,
-                        text: "Number of Contributions", // Y-axis label
-                      },
-                      beginAtZero: true, // Start Y-axis at 0
-                    },
-                  },
-                }}
-              />
+              <Line data={chartData} />
             ) : (
               <div>Aucune donnée à afficher</div>
             )}
