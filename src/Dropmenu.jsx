@@ -1,63 +1,53 @@
-import React from 'react';
-import { saveAs } from 'file-saver';
-import { saveAsPng } from 'save-html-as-image';
-import './Dropdown.css';
+import React, { useState } from "react";
+import { saveAs } from "file-saver";
+import { saveAsPng } from "save-html-as-image";
+import { ChevronDown, Download } from "lucide-react";
+import "./Dropdown.css";
 
-const DropdownMenu = ({ chartData, resultWikipedia, userContribs }) => {
-  const exportToJSON = () => {
-    const data = { resultWikipedia, userContribs };
-    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(data)
-    )}`;
-    const link = document.createElement('a');
-    link.href = jsonString;
-    link.download = 'data.json';
-    link.click();
-  };
+const DropdownMenu = ({ resultWikipedia, userContribs }) => {
+  const [selectedFormat, setSelectedFormat] = useState(""); // Stocke le format sélectionné
 
-  const exportToCSV = () => {
-    const csvRows = [
-      ['Username', 'Contributions'],
-      ...userContribs.map((user) => [user.username, user.count]),
-    ];
+  const exportData = () => {
+    if (!selectedFormat) return; // Empêche le téléchargement si aucun format n'est sélectionné
 
-    const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      csvRows.map((e) => e.join(',')).join('\n');
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'data.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const exportToPNG = () => {
-    const element = document.querySelector('.results-container');
-    saveAsPng(element, { filename: 'results.png' });
-  };
-
-  const handleExportChange = (event) => {
-    const selectedValue = event.target.value;
-    if (selectedValue === 'json') {
-      exportToJSON();
-    } else if (selectedValue === 'csv') {
-      exportToCSV();
-    } else if (selectedValue === 'png') {
-      exportToPNG();
+    if (selectedFormat === "json") {
+      const data = { resultWikipedia, userContribs };
+      const jsonBlob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      saveAs(jsonBlob, "data.json");
+    } else if (selectedFormat === "csv") {
+      const csvRows = [
+        ["Username", "Contributions"],
+        ...userContribs.map((user) => [user.username, user.count]),
+      ];
+      const csvBlob = new Blob([csvRows.map((row) => row.join(",")).join("\n")], { type: "text/csv" });
+      saveAs(csvBlob, "data.csv");
+    } else if (selectedFormat === "png") {
+      const element = document.querySelector(".results-container");
+      saveAsPng(element, { filename: "results.png" });
     }
   };
 
+  const handleFormatChange = (event) => {
+    setSelectedFormat(event.target.value); // Met à jour le format sélectionné
+  };
+
   return (
-    <div className="contain">
-      <select onChange={handleExportChange} defaultValue="" className="select">
-        <option value="" disabled>Exporter</option>
-        <option value="json">Exporter en JSON</option>
-        <option value="csv">Exporter en CSV</option>
-        <option value="png">Exporter en PNG</option>
-      </select>
+    <div className="dropdown-container">
+      {/* Sélecteur de format */}
+      <div className="dropdown">
+        <select onChange={handleFormatChange} value={selectedFormat} className="dropdown-select">
+          <option value="" disabled>Choisir un format</option>
+          <option value="json">JSON</option>
+          <option value="csv">CSV</option>
+          <option value="png">PNG</option>
+        </select>
+        <ChevronDown className="dropdown-icon" size={16} />
+      </div>
+
+      {/* Bouton de téléchargement */}
+      <button className="download-btn" onClick={exportData} disabled={!selectedFormat}>
+        <Download size={14} />
+      </button>
     </div>
   );
 };

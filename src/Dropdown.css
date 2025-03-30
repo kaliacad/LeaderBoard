@@ -1,17 +1,54 @@
-.contain {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .select {
-    padding: 10px 20px;
-    color: #ccc;
-    font-size: 9px;
-     margin: 0 5px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    background-color: #05614a !important;
-    cursor: pointer;
-    outline: none;
-  }
+.dropdown-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 8px;
+  background: white;
+  cursor: pointer;
+}
+
+.dropdown-select {
+  appearance: none;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  padding-right: 16px;
+}
+
+.dropdown-select:focus {
+  outline: none;
+}
+
+.dropdown-icon {
+  position: absolute;
+  right: 4px;
+  pointer-events: none;
+}
+
+.download-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 7px;
+}
+
+.download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.download-btn:hover:not(:disabled) {
+  opacity: 0.7;
+}
